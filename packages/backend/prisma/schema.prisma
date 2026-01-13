@@ -1,0 +1,577 @@
+// This is your Prisma schema file
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// USER & AUTHENTICATION
+// ============================================================================
+
+model User {
+  id          Int      @id @default(autoincrement())
+  username    String   @unique @db.VarChar(50)
+  password    String   @db.VarChar(255)
+  email       String?  @db.VarChar(190)
+  role        UserRole @default(PLAYER)
+
+  // Profile
+  displayName String?  @map("display_name") @db.VarChar(120)
+  bio         String?  @db.Text
+  avatarUrl   String?  @map("avatar_url") @db.VarChar(255)
+  bannerUrl   String?  @map("banner_url") @db.VarChar(255)
+  statusText  String?  @map("status_text") @db.VarChar(190)
+
+  // Game Progress
+  level         Int      @default(1)
+  overallXp     Int      @default(0) @map("overall_xp")
+  currentFloor  Int      @default(1) @map("current_floor")
+  deepestFloor  Int      @default(1) @map("deepest_floor")
+  currentAreaCode String? @map("current_area_code") @db.VarChar(80)
+  gold          Int      @default(0)
+
+  // Metadata
+  verified   Boolean   @default(false)
+  lastSeen   DateTime? @map("last_seen")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  skills              UserSkill[]
+  battles             Battle[]
+  chatMessages        ChatMessage[]
+  chatReports         ChatMessageReport[] @relation("ReportedBy")
+  tavernPosts         TavernPost[]
+  profileComments     ProfileComment[]    @relation("ProfileOwner")
+  profileCommentsWritten ProfileComment[] @relation("CommentAuthor")
+  wikiPages           WikiPage[]
+  supportTickets      SupportTicket[]
+  guildMemberships    GuildMember[]
+  ownedGuilds         Guild[]             @relation("GuildOwner")
+  newsArticles        News[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  PLAYER
+  SUPPORTER
+  HELPER
+  MODERATOR
+  ADMIN
+  GOVERNOR
+  LIBRARIAN
+
+  @@map("user_role")
+}
+
+// ============================================================================
+// SKILLS SYSTEM
+// ============================================================================
+
+model Skill {
+  id    Int    @id @default(autoincrement())
+  skey  String @unique @db.VarChar(32)
+  name  String @db.VarChar(64)
+
+  userSkills UserSkill[]
+
+  @@map("skills")
+}
+
+model UserSkill {
+  userId    Int      @map("user_id")
+  skillId   Int      @map("skill_id")
+  level     Int      @default(1)
+  xp        Int      @default(0)
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@id([userId, skillId])
+  @@map("user_skills")
+}
+
+model XpThreshold {
+  level       Int @id
+  xpRequired  Int @map("xp_required")
+
+  @@map("xp_thresholds")
+}
+
+// ============================================================================
+// COMBAT SYSTEM
+// ============================================================================
+
+model Mob {
+  id        Int    @id @default(autoincrement())
+  name      String @db.VarChar(120)
+  level     Int
+  hp        Int
+  attack    Int
+  defense   Int
+  magic     Int
+  range     Int
+  rewardXp  Int    @map("reward_xp")
+  rewardGold Int   @map("reward_gold")
+  minFloor  Int    @default(1) @map("min_floor")
+  maxFloor  Int    @default(999) @map("max_floor")
+
+  battles Battle[]
+
+  @@map("mobs")
+}
+
+model Battle {
+  id             BigInt        @id @default(autoincrement())
+  userId         Int           @map("user_id")
+  mobId          Int           @map("mob_id")
+
+  // Character state
+  charName       String        @map("char_name") @db.VarChar(120)
+  charHpCurrent  Int           @map("char_hp_current")
+  charHpMax      Int           @map("char_hp_max")
+
+  // Mob state
+  mobName        String        @map("mob_name") @db.VarChar(120)
+  mobHpCurrent   Int           @map("mob_hp_current")
+  mobHpMax       Int           @map("mob_hp_max")
+
+  // Rewards
+  rewardXp       Int           @map("reward_xp")
+  rewardGold     Int           @map("reward_gold")
+
+  // Game state
+  floor          Int           @default(1)
+  voidIntensity  Int           @default(0) @map("void_intensity")
+  combatStyle    CombatStyle   @map("combat_style")
+  status         BattleStatus  @default(ONGOING)
+
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+
+  user  User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mob   Mob         @relation(fields: [mobId], references: [id])
+  turns BattleTurn[]
+
+  @@index([userId, status])
+  @@index([floor])
+  @@map("battles")
+}
+
+enum CombatStyle {
+  ATTACK
+  STRENGTH
+  DEFENSE
+  RANGE
+  MAGIC
+
+  @@map("combat_style")
+}
+
+enum BattleStatus {
+  ONGOING
+  WON
+  LOST
+  FLED
+
+  @@map("battle_status")
+}
+
+model BattleTurn {
+  id          BigInt  @id @default(autoincrement())
+  battleId    BigInt  @map("battle_id")
+  turnNo      Int     @map("turn_no")
+  actor       Actor
+  action      String  @db.VarChar(32)
+  damage      Int
+  charHpAfter Int     @map("char_hp_after")
+  mobHpAfter  Int     @map("mob_hp_after")
+  logText     String  @map("log_text") @db.Text
+
+  battle Battle @relation(fields: [battleId], references: [id], onDelete: Cascade)
+
+  @@index([battleId])
+  @@map("battle_turns")
+}
+
+enum Actor {
+  PLAYER
+  MOB
+
+  @@map("actor")
+}
+
+// ============================================================================
+// GUILD SYSTEM
+// ============================================================================
+
+model Guild {
+  id           BigInt   @id @default(autoincrement())
+  name         String   @unique @db.VarChar(80)
+  tag          String   @db.VarChar(10)
+  description  String?  @db.Text
+  ownerId      Int?     @map("owner_id")
+  emblem       String?  @db.VarChar(255)
+  isRecruiting Boolean  @default(true) @map("is_recruiting")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  owner   User?         @relation("GuildOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  members GuildMember[]
+
+  @@map("guilds")
+}
+
+model GuildMember {
+  id       BigInt         @id @default(autoincrement())
+  guildId  BigInt         @map("guild_id")
+  userId   Int            @map("user_id")
+  role     GuildMemberRole @default(MEMBER)
+  joinedAt DateTime       @default(now()) @map("joined_at")
+
+  guild Guild @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([guildId, userId])
+  @@map("guild_members")
+}
+
+enum GuildMemberRole {
+  LEADER
+  OFFICER
+  MEMBER
+
+  @@map("guild_member_role")
+}
+
+// ============================================================================
+// ITEMS & INVENTORY
+// ============================================================================
+
+model Item {
+  id              Int        @id @default(autoincrement())
+  name            String     @db.VarChar(120)
+  slug            String     @unique @db.VarChar(140)
+  type            ItemType   @default(MISC)
+  rarity          ItemRarity @default(COMMON)
+  description     String?    @db.Text
+  iconPath        String?    @map("icon_path") @db.VarChar(255)
+  stackable       Boolean    @default(true)
+  maxStack        Int        @default(99) @map("max_stack")
+  baseValue       Int        @default(0) @map("base_value")
+  bindOnPickup    Boolean    @default(false) @map("bind_on_pickup")
+  usable          Boolean    @default(false)
+  levelRequirement Int       @default(1) @map("level_requirement")
+  useScript       String?    @map("use_script") @db.VarChar(128)
+  usePayload      Json?      @map("use_payload")
+  createdBy       Int?       @map("created_by")
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+
+  modifiers ItemModifier[]
+  images    ItemImage[]
+
+  @@map("items")
+}
+
+enum ItemType {
+  WEAPON
+  ARMOR
+  CONSUMABLE
+  MATERIAL
+  QUEST
+  MISC
+
+  @@map("item_type")
+}
+
+enum ItemRarity {
+  COMMON
+  UNCOMMON
+  RARE
+  EPIC
+  LEGENDARY
+  MYTHIC
+
+  @@map("item_rarity")
+}
+
+model ItemModifier {
+  id            Int     @id @default(autoincrement())
+  itemId        Int     @map("item_id")
+  statName      String  @map("stat_name") @db.VarChar(64)
+  flatAmount    Int     @default(0) @map("flat_amount")
+  percentAmount Decimal @default(0) @map("percent_amount") @db.Decimal(6, 2)
+
+  item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@map("item_modifiers")
+}
+
+model ItemImage {
+  id        Int      @id @default(autoincrement())
+  itemId    Int      @map("item_id")
+  path      String   @db.VarChar(255)
+  altText   String   @map("alt_text") @db.VarChar(190)
+  isPrimary Boolean  @default(false) @map("is_primary")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@map("item_images")
+}
+
+// ============================================================================
+// CHAT SYSTEM
+// ============================================================================
+
+model ChatMessage {
+  id        BigInt       @id @default(autoincrement())
+  userId    Int          @map("user_id")
+  channel   ChatChannel  @default(GLOBAL)
+  body      String       @db.Text
+  createdAt DateTime     @default(now()) @map("created_at")
+
+  user    User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reports ChatMessageReport[]
+
+  @@index([channel, createdAt])
+  @@map("chat_messages")
+}
+
+enum ChatChannel {
+  GLOBAL
+  ADS
+  SUPPORT
+  GUILD
+
+  @@map("chat_channel")
+}
+
+model ChatMessageReport {
+  id             Int               @id @default(autoincrement())
+  messageId      BigInt            @map("message_id")
+  reporterUserId Int               @map("reporter_user_id")
+  reason         String            @db.VarChar(255)
+  status         ReportStatus      @default(OPEN)
+  createdAt      DateTime          @default(now()) @map("created_at")
+  handledBy      Int?              @map("handled_by")
+  handledAt      DateTime?         @map("handled_at")
+
+  message  ChatMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  reporter User        @relation("ReportedBy", fields: [reporterUserId], references: [id], onDelete: Cascade)
+
+  @@index([messageId])
+  @@index([status])
+  @@map("chat_message_reports")
+}
+
+enum ReportStatus {
+  OPEN
+  RESOLVED
+  INVALID
+
+  @@map("report_status")
+}
+
+// ============================================================================
+// SOCIAL FEATURES
+// ============================================================================
+
+model TavernPost {
+  id        Int       @id @default(autoincrement())
+  userId    Int       @map("user_id")
+  title     String    @db.VarChar(120)
+  body      String    @db.Text
+  expiresAt DateTime? @map("expires_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
+  @@map("tavern_posts")
+}
+
+model ProfileComment {
+  id            Int      @id @default(autoincrement())
+  profileUserId Int      @map("profile_user_id")
+  authorUserId  Int      @map("author_user_id")
+  body          String   @db.Text
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  profileUser User @relation("ProfileOwner", fields: [profileUserId], references: [id], onDelete: Cascade)
+  author      User @relation("CommentAuthor", fields: [authorUserId], references: [id], onDelete: Cascade)
+
+  @@map("profile_comments")
+}
+
+// ============================================================================
+// WIKI SYSTEM
+// ============================================================================
+
+model WikiPage {
+  id        Int          @id @default(autoincrement())
+  slug      String       @unique @db.VarChar(150)
+  title     String       @db.VarChar(150)
+  content   String       @db.Text
+  imagePath String?      @map("image_path") @db.VarChar(255)
+  status    WikiStatus   @default(DRAFT)
+  authorId  Int          @map("author_id")
+  createdAt DateTime     @default(now()) @map("created_at")
+  updatedAt DateTime     @updatedAt @map("updated_at")
+
+  author     User                 @relation(fields: [authorId], references: [id])
+  categories WikiPageCategory[]
+
+  @@map("wiki_pages")
+}
+
+enum WikiStatus {
+  DRAFT
+  PUBLISHED
+
+  @@map("wiki_status")
+}
+
+model WikiCategory {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique @db.VarChar(150)
+  name        String   @db.VarChar(150)
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  pages WikiPageCategory[]
+
+  @@map("wiki_categories")
+}
+
+model WikiPageCategory {
+  pageId     Int @map("page_id")
+  categoryId Int @map("category_id")
+
+  page     WikiPage     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  category WikiCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([pageId, categoryId])
+  @@map("wiki_page_categories")
+}
+
+// ============================================================================
+// WORLD & EXPLORATION
+// ============================================================================
+
+model WorldArea {
+  id         Int      @id @default(autoincrement())
+  slug       String   @unique @db.VarChar(80)
+  name       String   @db.VarChar(120)
+  shortBlurb String?  @map("short_blurb") @db.VarChar(255)
+  imagePath  String?  @map("image_path") @db.VarChar(255)
+  loreText   String?  @map("lore_text") @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  towers WorldTower[]
+
+  @@map("world_areas")
+}
+
+model WorldTower {
+  id          Int      @id @default(autoincrement())
+  areaId      Int      @map("area_id")
+  name        String   @db.VarChar(120)
+  description String?  @db.Text
+  minFloor    Int      @default(1) @map("min_floor")
+  maxFloor    Int      @default(50) @map("max_floor")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  area WorldArea @relation(fields: [areaId], references: [id], onDelete: Cascade)
+
+  @@map("world_towers")
+}
+
+// ============================================================================
+// ADMIN & SUPPORT
+// ============================================================================
+
+model GameSetting {
+  key       String   @id @db.VarChar(100)
+  value     String   @db.VarChar(255)
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("game_settings")
+}
+
+model SupportTicket {
+  id        Int              @id @default(autoincrement())
+  userId    Int?             @map("user_id")
+  email     String           @db.VarChar(190)
+  subject   String           @db.VarChar(190)
+  message   String           @db.Text
+  status    TicketStatus     @default(OPEN)
+  priority  TicketPriority   @default(NORMAL)
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime         @updatedAt @map("updated_at")
+
+  user    User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  replies SupportReply[]
+
+  @@map("support_tickets")
+}
+
+enum TicketStatus {
+  OPEN
+  ANSWERED
+  CLOSED
+
+  @@map("ticket_status")
+}
+
+enum TicketPriority {
+  LOW
+  NORMAL
+  HIGH
+
+  @@map("ticket_priority")
+}
+
+model SupportReply {
+  id         Int      @id @default(autoincrement())
+  ticketId   Int      @map("ticket_id")
+  userId     Int?     @map("user_id")
+  authorRole String   @map("author_role") @db.VarChar(32)
+  message    String   @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@map("support_replies")
+}
+
+model News {
+  id          Int       @id @default(autoincrement())
+  title       String    @db.VarChar(190)
+  slug        String    @unique @db.VarChar(190)
+  body        String    @db.Text
+  type        NewsType  @default(NEWS)
+  authorId    Int       @map("author_id")
+  publishedAt DateTime? @map("published_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  author User @relation(fields: [authorId], references: [id])
+
+  @@map("news")
+}
+
+enum NewsType {
+  NEWS
+  PATCH
+
+  @@map("news_type")
+}
