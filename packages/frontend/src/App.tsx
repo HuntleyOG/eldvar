@@ -1,4 +1,7 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
+import { LoginPage } from './pages/LoginPage';
+import { RegisterPage } from './pages/RegisterPage';
+import { GamePage } from './pages/GamePage';
 
 function HomePage() {
   return (
@@ -38,12 +41,16 @@ function HomePage() {
 
         <div className="text-center mt-12">
           <div className="inline-flex gap-4">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition">
-              Login
-            </button>
-            <button className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg transition">
-              Register
-            </button>
+            <Link to="/login">
+              <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition">
+                Login
+              </button>
+            </Link>
+            <Link to="/register">
+              <button className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg transition">
+                Register
+              </button>
+            </Link>
           </div>
         </div>
 
@@ -62,6 +69,9 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/game" element={<GamePage />} />
     </Routes>
   );
 }
