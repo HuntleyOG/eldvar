@@ -28,9 +28,12 @@ export class AuthService {
       user: {
         id: user.id,
         username: user.username,
+        email: user.email,
         role: user.role,
         displayName: user.displayName,
         avatarUrl: user.avatarUrl,
+        level: user.level,
+        verified: user.verified,
       },
     };
   }
@@ -58,6 +61,8 @@ export class AuthService {
     });
 
     const { password: _, ...result } = user;
-    return result;
+
+    // Return the same format as login (with JWT token)
+    return this.login(result);
   }
 }
