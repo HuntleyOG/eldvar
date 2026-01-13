@@ -1,0 +1,11 @@
+packages:
+  - packages/*
+  - apps/*
+
+onlyBuiltDependencies:
+  - '@nestjs/core'
+  - '@prisma/client'
+  - '@prisma/engines'
+  - bcrypt
+  - esbuild
+  - prisma
