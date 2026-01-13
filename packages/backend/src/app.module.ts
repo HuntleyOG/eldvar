@@ -3,12 +3,12 @@ import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ScheduleModule } from '@nestjs/schedule';
 import { PrismaModule } from './common/prisma/prisma.module';
-import { AuthModule } from './modules/auth/auth.module';
+// import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { SkillsModule } from './modules/skills/skills.module';
 import { CombatModule } from './modules/combat/combat.module';
 import { GuildsModule } from './modules/guilds/guilds.module';
-import { ChatModule } from './modules/chat/chat.module';
+// import { ChatModule } from './modules/chat/chat.module';
 import { WikiModule } from './modules/wiki/wiki.module';
 import { AdminModule } from './modules/admin/admin.module';
 
@@ -35,12 +35,12 @@ import { AdminModule } from './modules/admin/admin.module';
     PrismaModule,
 
     // Feature modules
-    AuthModule,
+    // AuthModule,
     UsersModule,
     SkillsModule,
     CombatModule,
     GuildsModule,
-    ChatModule,
+    // ChatModule,
     WikiModule,
     AdminModule,
   ],
