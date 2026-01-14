@@ -154,6 +154,12 @@ model Battle {
   combatStyle    CombatStyle   @map("combat_style")
   status         BattleStatus  @default(ONGOING)
 
+  // Travel context (for battles during travel)
+  travelDestination   String?  @map("travel_destination") @db.VarChar(80)
+  travelProgress      Int?     @map("travel_progress")
+  travelDistance      Int?     @map("travel_distance")
+  travelStartLocation String?  @map("travel_start_location") @db.VarChar(80)
+
   createdAt      DateTime      @default(now()) @map("created_at")
   updatedAt      DateTime      @updatedAt @map("updated_at")
 

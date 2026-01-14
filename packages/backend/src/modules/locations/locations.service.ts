@@ -75,7 +75,13 @@ export class LocationsService {
     return await this.getLocationBySlug(user.currentAreaCode);
   }
 
-  async travelToLocation(userId: number, destinationSlug: string, isComplete: boolean = false) {
+  async travelToLocation(
+    userId: number,
+    destinationSlug: string,
+    isComplete: boolean = false,
+    travelProgress?: number,
+    travelDistance?: number,
+  ) {
     // Verify destination exists
     const destination = await this.getLocationBySlug(destinationSlug);
 
@@ -84,6 +90,20 @@ export class LocationsService {
       where: { id: userId },
       select: { currentAreaCode: true, currentFloor: true },
     });
+
+    // Check if user has an active battle - they cannot travel if they do
+    const activeBattle = await this.prisma.battle.findFirst({
+      where: {
+        userId,
+        status: 'ONGOING',
+      },
+    });
+
+    if (activeBattle) {
+      throw new BadRequestException(
+        'You cannot travel while in an active battle. You must fight or flee first.',
+      );
+    }
 
     // Only check if already at destination when completing the journey
     if (isComplete && user?.currentAreaCode === destinationSlug) {
@@ -108,11 +128,15 @@ export class LocationsService {
         // Pick a random mob
         const randomMob = mobs[Math.floor(Math.random() * mobs.length)];
 
-        // Start the battle
+        // Start the battle with travel context
         const battleResult = await this.combatService.startBattle(userId, {
           mobId: randomMob.id,
           floor,
           voidIntensity: 0,
+          travelDestination: destinationSlug,
+          travelProgress: travelProgress || 0,
+          travelDistance: travelDistance || 0,
+          travelStartLocation: user?.currentAreaCode || '',
         });
 
         return {

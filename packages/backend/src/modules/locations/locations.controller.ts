@@ -32,7 +32,15 @@ export class LocationsController {
     @Request() req: any,
     @Body('destination') destination: string,
     @Body('isComplete') isComplete: boolean = false,
+    @Body('travelProgress') travelProgress?: number,
+    @Body('travelDistance') travelDistance?: number,
   ) {
-    return await this.locationsService.travelToLocation(req.user.userId, destination, isComplete);
+    return await this.locationsService.travelToLocation(
+      req.user.userId,
+      destination,
+      isComplete,
+      travelProgress,
+      travelDistance,
+    );
   }
 }

@@ -70,6 +70,11 @@ export class CombatService {
         voidIntensity: dto.voidIntensity || 0,
         combatStyle: CombatStyle.ATTACK, // Default
         status: BattleStatus.ONGOING,
+        // Travel context (if this is a travel battle)
+        travelDestination: dto.travelDestination,
+        travelProgress: dto.travelProgress,
+        travelDistance: dto.travelDistance,
+        travelStartLocation: dto.travelStartLocation,
       },
       include: {
         mob: true,
@@ -259,6 +264,16 @@ export class CombatService {
     // If won, award XP and gold
     if (status === BattleStatus.WON) {
       await this.awardRewards(userId, battle);
+    }
+
+    // If lost during travel, return user to their starting location
+    if (status === BattleStatus.LOST && battle.travelStartLocation) {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          currentAreaCode: battle.travelStartLocation,
+        },
+      });
     }
 
     return {

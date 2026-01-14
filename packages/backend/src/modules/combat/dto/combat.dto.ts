@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsInt } from 'class-validator';
+import { IsEnum, IsOptional, IsInt, IsString } from 'class-validator';
 import { CombatStyle } from '@prisma/client';
 
 export class StartBattleDto {
@@ -12,6 +12,23 @@ export class StartBattleDto {
   @IsOptional()
   @IsInt()
   voidIntensity?: number;
+
+  // Travel context (optional - only for battles during travel)
+  @IsOptional()
+  @IsString()
+  travelDestination?: string;
+
+  @IsOptional()
+  @IsInt()
+  travelProgress?: number;
+
+  @IsOptional()
+  @IsInt()
+  travelDistance?: number;
+
+  @IsOptional()
+  @IsString()
+  travelStartLocation?: string;
 }
 
 export class TakeTurnDto {

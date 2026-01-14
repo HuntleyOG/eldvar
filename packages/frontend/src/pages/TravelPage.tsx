@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { locationApi, Location } from '../lib/api';
 
 export function TravelPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuthStore();
   const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
   const [locations, setLocations] = useState<Location[]>([]);
@@ -31,6 +32,16 @@ export function TravelPage() {
         ]);
         setCurrentLocation(current);
         setLocations(all);
+
+        // Check if we're resuming travel after a battle
+        const state = location.state as any;
+        if (state?.resumeTravel) {
+          setTravelDestination(state.destination);
+          setTravelProgress(state.progress);
+          setTravelDistance(state.distance);
+          // Clear the navigation state
+          navigate(location.pathname, { replace: true, state: {} });
+        }
       } catch (err: any) {
         console.error('Error loading locations:', err);
         setError(err.response?.data?.message || 'Failed to load locations');
@@ -40,7 +51,7 @@ export function TravelPage() {
     };
 
     loadData();
-  }, [user, navigate]);
+  }, [user, navigate, location]);
 
   const handleStartTravel = (destination: string) => {
     setTravelDestination(destination);
@@ -66,7 +77,12 @@ export function TravelPage() {
       const newProgress = travelProgress + 1;
       const isComplete = newProgress >= travelDistance;
 
-      const response = await locationApi.travelTo(travelDestination, isComplete);
+      const response = await locationApi.travelTo(
+        travelDestination,
+        isComplete,
+        newProgress,
+        travelDistance,
+      );
 
       // Check for encounter
       if (response.encounter && response.battle) {

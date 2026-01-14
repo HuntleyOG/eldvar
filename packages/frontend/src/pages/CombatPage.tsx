@@ -98,9 +98,24 @@ export function CombatPage() {
   };
 
   const handleContinue = () => {
-    if (battle?.status === BattleStatus.WON) {
-      navigate('/town');
-    } else if (battle?.status === BattleStatus.LOST) {
+    if (!battle) return;
+
+    // If this was a travel battle and player won/fled, resume journey
+    if (
+      battle.travelDestination &&
+      (battle.status === BattleStatus.WON || battle.status === BattleStatus.FLED)
+    ) {
+      // Navigate to travel page with state to resume journey
+      navigate('/travel', {
+        state: {
+          resumeTravel: true,
+          destination: battle.travelDestination,
+          progress: battle.travelProgress || 0,
+          distance: battle.travelDistance || 10,
+        },
+      });
+    } else {
+      // Normal combat or player lost - return to town
       navigate('/town');
     }
   };
@@ -336,7 +351,10 @@ export function CombatPage() {
                 onClick={handleContinue}
                 className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition"
               >
-                Continue
+                {battle.travelDestination &&
+                (battle.status === BattleStatus.WON || battle.status === BattleStatus.FLED)
+                  ? '🚶 Continue Journey'
+                  : 'Return to Town'}
               </button>
             </div>
           )}
