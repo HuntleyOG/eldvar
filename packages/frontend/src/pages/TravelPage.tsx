@@ -62,7 +62,11 @@ export function TravelPage() {
       setTraveling(true);
       setError(null);
 
-      const response = await locationApi.travelTo(travelDestination);
+      // Calculate if this is the final step
+      const newProgress = travelProgress + 1;
+      const isComplete = newProgress >= travelDistance;
+
+      const response = await locationApi.travelTo(travelDestination, isComplete);
 
       // Check for encounter
       if (response.encounter && response.battle) {
@@ -72,11 +76,10 @@ export function TravelPage() {
       }
 
       // No encounter - increment progress
-      const newProgress = travelProgress + 1;
       setTravelProgress(newProgress);
 
       // Check if arrived
-      if (newProgress >= travelDistance) {
+      if (isComplete) {
         setCurrentLocation(response.location);
         alert(`${response.message}\n\nYou have arrived!`);
         setTravelDestination(null);
