@@ -130,7 +130,7 @@ export class UsersService {
       throw new NotFoundException('No skills found for this user');
     }
 
-    return userSkills.map((us) => ({
+    return userSkills.map((us: { skillId: number; level: number; xp: number; updatedAt: Date; skill: { skey: string; name: string } }) => ({
       skillId: us.skillId,
       skillKey: us.skill.skey,
       skillName: us.skill.name,
