@@ -60,15 +60,28 @@ export class AuthService {
         },
       });
 
-      // Initialize all skills at level 1
+      // Initialize all skills - combat skills start at level 3, others at level 1
       const skills = await this.prisma.skill.findMany();
+
+      // Combat skill keys that should start at level 3
+      const combatSkillKeys = ['attack', 'strength', 'defense', 'range', 'magic'];
+
+      // Get XP required for level 3
+      const level3Threshold = await this.prisma.xpThreshold.findUnique({
+        where: { level: 3 },
+      });
+      const level3Xp = level3Threshold?.xpRequired || 0;
+
       await this.prisma.userSkill.createMany({
-        data: skills.map((skill) => ({
-          userId: user.id,
-          skillId: skill.id,
-          level: 1,
-          xp: 0,
-        })),
+        data: skills.map((skill) => {
+          const isCombatSkill = combatSkillKeys.includes(skill.skey.toLowerCase());
+          return {
+            userId: user.id,
+            skillId: skill.id,
+            level: isCombatSkill ? 3 : 1,
+            xp: isCombatSkill ? level3Xp : 0,
+          };
+        }),
       });
 
       const { password: _, ...result } = user;
