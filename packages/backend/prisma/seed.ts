@@ -25,12 +25,13 @@ async function main() {
     { skey: 'attack', name: 'Attack' },
     { skey: 'strength', name: 'Strength' },
     { skey: 'defense', name: 'Defense' },
-    { skey: 'constitution', name: 'Constitution' },
+    { skey: 'health', name: 'Health' },
     { skey: 'range', name: 'Range' },
     { skey: 'magic', name: 'Magic' },
     { skey: 'pathfinding', name: 'Pathfinding' },
     { skey: 'mining', name: 'Mining' },
     { skey: 'smithing', name: 'Smithing' },
+    { skey: 'crafting', name: 'Crafting' },
   ];
 
   for (const skill of skills) {
