@@ -2,6 +2,8 @@ import { Routes, Route, Link } from 'react-router-dom';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { GamePage } from './pages/GamePage';
+import { ProfilePage } from './pages/ProfilePage';
+import { EditProfilePage } from './pages/EditProfilePage';
 
 function HomePage() {
   return (
@@ -72,6 +74,9 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/game" element={<GamePage />} />
+      <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/profile/edit" element={<EditProfilePage />} />
+      <Route path="/profile/:username" element={<ProfilePage />} />
     </Routes>
   );
 }
