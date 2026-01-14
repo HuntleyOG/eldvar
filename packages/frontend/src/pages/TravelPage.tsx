@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { locationApi, Location } from '../lib/api';
@@ -15,6 +15,7 @@ export function TravelPage() {
   const [travelProgress, setTravelProgress] = useState(0);
   const [travelDistance, setTravelDistance] = useState(10); // Default 10 steps
   const [error, setError] = useState<string | null>(null);
+  const resumeProcessedRef = useRef(false);
 
   useEffect(() => {
     if (!user) {
@@ -43,17 +44,18 @@ export function TravelPage() {
     loadData();
   }, [user, navigate]);
 
-  // Separate effect to handle resume travel state
+  // Separate effect to handle resume travel state (runs only once per navigation)
   useEffect(() => {
     const state = location.state as any;
-    if (state?.resumeTravel) {
+    if (state?.resumeTravel && !resumeProcessedRef.current) {
+      resumeProcessedRef.current = true;
       setTravelDestination(state.destination);
       setTravelProgress(state.progress);
       setTravelDistance(state.distance);
       // Clear the navigation state
-      navigate(location.pathname, { replace: true, state: {} });
+      window.history.replaceState({}, document.title);
     }
-  }, [location.state, navigate, location.pathname]);
+  }, [location.state]);
 
   const handleStartTravel = (destination: string) => {
     setTravelDestination(destination);
