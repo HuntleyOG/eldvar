@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { userApi, User, UserSkill } from '../lib/api';
+import { formatPID, getRoleBadge } from '../lib/userUtils';
 
 export function ProfilePage() {
   const navigate = useNavigate();
@@ -127,7 +128,22 @@ export function ProfilePage() {
                   <span className="text-green-400 text-sm">✓ Verified</span>
                 )}
               </div>
-              <p className="text-gray-400 mb-2">@{profile.username}</p>
+              <div className="flex items-center gap-2 mb-2">
+                <p className="text-gray-400">
+                  @{profile.username}
+                  <span className="font-mono text-gray-500">{formatPID(profile.id)}</span>
+                </p>
+                {(() => {
+                  const roleBadge = getRoleBadge(profile.role);
+                  return (
+                    <span
+                      className={`${roleBadge.bgClass} ${roleBadge.textClass} px-2 py-1 rounded text-xs font-bold`}
+                    >
+                      {roleBadge.label}
+                    </span>
+                  );
+                })()}
+              </div>
               {profile.statusText && (
                 <p className="text-gray-300 mb-2">{profile.statusText}</p>
               )}

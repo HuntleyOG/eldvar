@@ -296,3 +296,78 @@ export const combatApi = {
     return response.data;
   },
 };
+
+// Admin API
+export interface DashboardStats {
+  totalUsers: number;
+  onlineUsers: number;
+  newUsersToday: number;
+  totalBattles: number;
+  activeBattles: number;
+  totalGoldInEconomy: number;
+}
+
+export interface AdminUser {
+  id: number;
+  username: string;
+  email?: string;
+  role: string;
+  level: number;
+  overallXp: number;
+  gold: number;
+  verified: boolean;
+  lastSeen?: string;
+  createdAt: string;
+  currentAreaCode?: string;
+}
+
+export interface UserListResponse {
+  users: AdminUser[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+export const adminApi = {
+  getStats: async (): Promise<DashboardStats> => {
+    const response = await api.get<DashboardStats>('/admin/stats');
+    return response.data;
+  },
+
+  getAllUsers: async (page: number = 1, limit: number = 50): Promise<UserListResponse> => {
+    const response = await api.get<UserListResponse>('/admin/users', {
+      params: { page, limit },
+    });
+    return response.data;
+  },
+
+  searchUsers: async (query: string): Promise<AdminUser[]> => {
+    const response = await api.get<AdminUser[]>('/admin/users/search', {
+      params: { q: query },
+    });
+    return response.data;
+  },
+
+  getUserById: async (id: number): Promise<User> => {
+    const response = await api.get<User>(`/admin/users/${id}`);
+    return response.data;
+  },
+
+  updateUserRole: async (id: number, role: string): Promise<AdminUser> => {
+    const response = await api.patch<AdminUser>(`/admin/users/${id}/role`, { role });
+    return response.data;
+  },
+
+  updateUserStats: async (
+    id: number,
+    data: { gold?: number; overallXp?: number; level?: number }
+  ): Promise<AdminUser> => {
+    const response = await api.patch<AdminUser>(`/admin/users/${id}/stats`, data);
+    return response.data;
+  },
+
+  toggleUserBan: async (id: number): Promise<AdminUser> => {
+    const response = await api.patch<AdminUser>(`/admin/users/${id}/ban`);
+    return response.data;
+  },
+};
