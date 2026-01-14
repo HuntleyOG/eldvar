@@ -4,18 +4,27 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
+        pixel: {
+          bg: '#0f0f1e',
+          panel: '#1a1a2e',
+          border: '#16213e',
+          accent: '#0f3460',
+          primary: '#e94560',
+          secondary: '#533483',
+          success: '#2eb872',
+          warning: '#f39c12',
+          danger: '#e74c3c',
+          text: '#e0e0e0',
+          muted: '#7a7a8c',
         },
+      },
+      fontFamily: {
+        pixel: ['Press Start 2P', 'monospace', 'Courier New'],
+        mono: ['Courier New', 'monospace'],
+      },
+      boxShadow: {
+        'pixel': '4px 4px 0px 0px rgba(0, 0, 0, 0.4)',
+        'pixel-sm': '2px 2px 0px 0px rgba(0, 0, 0, 0.4)',
       },
     },
   },

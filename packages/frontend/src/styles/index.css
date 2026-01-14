@@ -2,20 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
+  font-family: 'Courier New', monospace;
+  -webkit-font-smoothing: none;
   -moz-osx-font-smoothing: grayscale;
+  font-smooth: never;
+  background: #0f0f1e;
+  color: #e0e0e0;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  font-family: 'Courier New', Monaco, Consolas, monospace;
+}
+
+/* Pixel-style button */
+@layer components {
+  .btn-pixel {
+    @apply px-4 py-2 font-bold border-4 border-black transition-transform active:translate-x-1 active:translate-y-1;
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.8);
+  }
+
+  .btn-pixel:active {
+    box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.8);
+  }
+
+  .panel-pixel {
+    @apply border-4 border-black bg-pixel-panel;
+    box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 0.6);
+  }
 }
