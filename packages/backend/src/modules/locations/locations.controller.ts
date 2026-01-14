@@ -12,17 +12,17 @@ export class LocationsController {
     return await this.locationsService.getAllLocations();
   }
 
-  // Get specific location by slug (public)
-  @Get(':slug')
-  async getLocationBySlug(@Param('slug') slug: string) {
-    return await this.locationsService.getLocationBySlug(slug);
-  }
-
-  // Get current user's location (protected)
+  // Get current user's location (protected) - MUST come before :slug wildcard
   @UseGuards(JwtAuthGuard)
   @Get('current/location')
   async getCurrentLocation(@Request() req: any) {
     return await this.locationsService.getCurrentLocation(req.user.userId);
+  }
+
+  // Get specific location by slug (public) - wildcard route comes last
+  @Get(':slug')
+  async getLocationBySlug(@Param('slug') slug: string) {
+    return await this.locationsService.getLocationBySlug(slug);
   }
 
   // Travel to a new location (protected)

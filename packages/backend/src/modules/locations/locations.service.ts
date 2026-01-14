@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException, Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { CombatService } from '../combat/combat.service';
+import { BattleStatus } from '@prisma/client';
 
 @Injectable()
 export class LocationsService {
@@ -95,7 +96,7 @@ export class LocationsService {
     const activeBattle = await this.prisma.battle.findFirst({
       where: {
         userId,
-        status: 'ONGOING',
+        status: BattleStatus.ONGOING,
       },
     });
 
