@@ -19,7 +19,7 @@ async function bootstrap() {
       resave: false,
       saveUninitialized: false,
       cookie: {
-        maxAge: configService.get<number>('SESSION_MAX_AGE'),
+        maxAge: configService.get<number>('SESSION_MAX_AGE') || 86400000, // Default 24 hours
         httpOnly: true,
         secure: configService.get<string>('NODE_ENV') === 'production',
         sameSite: 'lax',
