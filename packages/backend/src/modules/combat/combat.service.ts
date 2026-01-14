@@ -180,7 +180,11 @@ export class CombatService {
     }
 
     // Return updated battle state
-    return await this.getBattle(battleId);
+    const updatedBattle = await this.getBattle(battleId);
+    return {
+      battle: updatedBattle,
+      message: undefined,
+    };
   }
 
   async flee(userId: number, battleId: string) {
