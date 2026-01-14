@@ -184,6 +184,31 @@ export function TownPage() {
               </div>
             </div>
           ))}
+
+          {/* Admin Panel (only visible to admins) */}
+          {user && ['ADMIN', 'GOVERNOR', 'MODERATOR'].includes(user.role) && (
+            <div className="bg-red-900/20 rounded-lg p-6 border border-red-600">
+              <h2 className="text-2xl font-bold mb-4 text-red-400">Administration</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <button
+                  onClick={() => navigate('/admin')}
+                  className="bg-red-900/50 hover:bg-red-900 rounded-lg p-4 border border-red-700 hover:border-red-500 transition text-left group"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="text-3xl group-hover:scale-110 transition-transform">
+                      🛡️
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-lg mb-1 group-hover:text-red-400 transition">
+                        Admin Panel
+                      </h3>
+                      <p className="text-sm text-red-300">Manage users and view statistics</p>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Footer */}

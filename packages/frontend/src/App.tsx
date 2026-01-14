@@ -7,6 +7,7 @@ import { EditProfilePage } from './pages/EditProfilePage';
 import { TownPage } from './pages/TownPage';
 import { TravelPage } from './pages/TravelPage';
 import { CombatPage } from './pages/CombatPage';
+import { AdminPanel } from './pages/AdminPanel';
 
 function HomePage() {
   return (
@@ -84,6 +85,7 @@ function App() {
       <Route path="/travel" element={<TravelPage />} />
       <Route path="/combat" element={<CombatPage />} />
       <Route path="/combat/:battleId" element={<CombatPage />} />
+      <Route path="/admin" element={<AdminPanel />} />
     </Routes>
   );
 }
