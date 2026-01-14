@@ -4,6 +4,8 @@ import { RegisterPage } from './pages/RegisterPage';
 import { GamePage } from './pages/GamePage';
 import { ProfilePage } from './pages/ProfilePage';
 import { EditProfilePage } from './pages/EditProfilePage';
+import { TownPage } from './pages/TownPage';
+import { TravelPage } from './pages/TravelPage';
 
 function HomePage() {
   return (
@@ -77,6 +79,8 @@ function App() {
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/profile/edit" element={<EditProfilePage />} />
       <Route path="/profile/:username" element={<ProfilePage />} />
+      <Route path="/town" element={<TownPage />} />
+      <Route path="/travel" element={<TravelPage />} />
     </Routes>
   );
 }
