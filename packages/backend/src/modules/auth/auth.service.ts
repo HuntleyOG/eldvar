@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -39,30 +40,49 @@ export class AuthService {
   }
 
   async register(username: string, password: string, email?: string) {
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Validate input
+    if (!username || username.length < 3) {
+      throw new BadRequestException('Username must be at least 3 characters long');
+    }
 
-    const user = await this.prisma.user.create({
-      data: {
-        username,
-        password: hashedPassword,
-        email,
-      },
-    });
+    if (!password || password.length < 6) {
+      throw new BadRequestException('Password must be at least 6 characters long');
+    }
 
-    // Initialize all skills at level 1
-    const skills = await this.prisma.skill.findMany();
-    await this.prisma.userSkill.createMany({
-      data: skills.map((skill) => ({
-        userId: user.id,
-        skillId: skill.id,
-        level: 1,
-        xp: 0,
-      })),
-    });
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-    const { password: _, ...result } = user;
+      const user = await this.prisma.user.create({
+        data: {
+          username,
+          password: hashedPassword,
+          email,
+        },
+      });
 
-    // Return the same format as login (with JWT token)
-    return this.login(result);
+      // Initialize all skills at level 1
+      const skills = await this.prisma.skill.findMany();
+      await this.prisma.userSkill.createMany({
+        data: skills.map((skill) => ({
+          userId: user.id,
+          skillId: skill.id,
+          level: 1,
+          xp: 0,
+        })),
+      });
+
+      const { password: _, ...result } = user;
+
+      // Return the same format as login (with JWT token)
+      return this.login(result);
+    } catch (error) {
+      // Handle Prisma unique constraint violation (duplicate username)
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          throw new ConflictException('Username already exists');
+        }
+      }
+      throw error;
+    }
   }
 }
