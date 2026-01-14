@@ -31,7 +31,8 @@ export class LocationsController {
   async travelToLocation(
     @Request() req: any,
     @Body('destination') destination: string,
+    @Body('isComplete') isComplete: boolean = false,
   ) {
-    return await this.locationsService.travelToLocation(req.user.userId, destination);
+    return await this.locationsService.travelToLocation(req.user.userId, destination, isComplete);
   }
 }

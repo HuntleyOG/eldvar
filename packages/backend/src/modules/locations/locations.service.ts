@@ -75,17 +75,18 @@ export class LocationsService {
     return await this.getLocationBySlug(user.currentAreaCode);
   }
 
-  async travelToLocation(userId: number, destinationSlug: string) {
+  async travelToLocation(userId: number, destinationSlug: string, isComplete: boolean = false) {
     // Verify destination exists
     const destination = await this.getLocationBySlug(destinationSlug);
 
-    // Get current location to check if already there
+    // Get current location
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       select: { currentAreaCode: true, currentFloor: true },
     });
 
-    if (user?.currentAreaCode === destinationSlug) {
+    // Only check if already at destination when completing the journey
+    if (isComplete && user?.currentAreaCode === destinationSlug) {
       throw new BadRequestException('You are already at this location');
     }
 
@@ -123,22 +124,36 @@ export class LocationsService {
       }
     }
 
-    // No encounter - complete travel normally
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: {
-        currentAreaCode: destinationSlug,
-        lastSeen: new Date(),
-      },
-    });
+    // Award small pathfinding XP for each step
+    await this.awardPathfindingXp(userId, 10);
 
-    // Award pathfinding XP (if skill exists)
-    await this.awardPathfindingXp(userId, 25);
+    // Only update location when journey is complete
+    if (isComplete) {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          currentAreaCode: destinationSlug,
+          lastSeen: new Date(),
+        },
+      });
 
+      // Award bonus XP for completing the journey
+      await this.awardPathfindingXp(userId, 15);
+
+      return {
+        encounter: false,
+        message: `Successfully traveled to ${destination.name}`,
+        location: destination,
+        complete: true,
+      };
+    }
+
+    // Step taken, but journey not complete yet
     return {
       encounter: false,
-      message: `Successfully traveled to ${destination.name}`,
+      message: `Taking a step toward ${destination.name}...`,
       location: destination,
+      complete: false,
     };
   }
 

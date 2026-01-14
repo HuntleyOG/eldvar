@@ -170,8 +170,8 @@ export const locationApi = {
     return response.data;
   },
 
-  travelTo: async (destination: string): Promise<TravelResponse> => {
-    const response = await api.post<TravelResponse>('/locations/travel', { destination });
+  travelTo: async (destination: string, isComplete: boolean = false): Promise<TravelResponse> => {
+    const response = await api.post<TravelResponse>('/locations/travel', { destination, isComplete });
     return response.data;
   },
 };
