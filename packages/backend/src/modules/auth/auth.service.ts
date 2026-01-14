@@ -63,7 +63,7 @@ export class AuthService {
       // Initialize all skills at level 1
       const skills = await this.prisma.skill.findMany();
       await this.prisma.userSkill.createMany({
-        data: skills.map((skill) => ({
+        data: skills.map((skill: { id: number; skey: string; name: string }) => ({
           userId: user.id,
           skillId: skill.id,
           level: 1,

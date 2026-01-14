@@ -349,7 +349,7 @@ export class CombatService {
     });
 
     const skillMap: any = {};
-    skills.forEach((s) => {
+    skills.forEach((s: { level: number; skill: { skey: string } }) => {
       skillMap[s.skill.skey] = s.level;
     });
 
