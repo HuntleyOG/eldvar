@@ -2,13 +2,12 @@
 -- This initializes skills for users who registered before skill initialization was added
 
 -- Insert skills for all users who don't have them
-INSERT INTO user_skills (user_id, skill_id, level, xp, created_at, updated_at)
+INSERT INTO user_skills (user_id, skill_id, level, xp, updated_at)
 SELECT
     u.id as user_id,
     s.id as skill_id,
     1 as level,
     0 as xp,
-    NOW() as created_at,
     NOW() as updated_at
 FROM users u
 CROSS JOIN skills s
@@ -21,7 +20,7 @@ WHERE NOT EXISTS (
 -- Verify the fix
 SELECT
     u.username,
-    COUNT(us.id) as skill_count
+    COUNT(us.user_id) as skill_count
 FROM users u
 LEFT JOIN user_skills us ON u.id = us.user_id
 GROUP BY u.id, u.username
