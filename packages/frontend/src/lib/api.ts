@@ -170,8 +170,18 @@ export const locationApi = {
     return response.data;
   },
 
-  travelTo: async (destination: string, isComplete: boolean = false): Promise<TravelResponse> => {
-    const response = await api.post<TravelResponse>('/locations/travel', { destination, isComplete });
+  travelTo: async (
+    destination: string,
+    isComplete: boolean = false,
+    travelProgress?: number,
+    travelDistance?: number,
+  ): Promise<TravelResponse> => {
+    const response = await api.post<TravelResponse>('/locations/travel', {
+      destination,
+      isComplete,
+      travelProgress,
+      travelDistance,
+    });
     return response.data;
   },
 };
@@ -233,6 +243,11 @@ export interface Battle {
   voidIntensity: number;
   combatStyle: CombatStyle;
   status: BattleStatus;
+  // Travel context (present if battle occurred during travel)
+  travelDestination?: string;
+  travelProgress?: number;
+  travelDistance?: number;
+  travelStartLocation?: string;
   createdAt: string;
   updatedAt: string;
   mob?: Mob;
