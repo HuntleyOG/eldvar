@@ -32,16 +32,6 @@ export function TravelPage() {
         ]);
         setCurrentLocation(current);
         setLocations(all);
-
-        // Check if we're resuming travel after a battle
-        const state = location.state as any;
-        if (state?.resumeTravel) {
-          setTravelDestination(state.destination);
-          setTravelProgress(state.progress);
-          setTravelDistance(state.distance);
-          // Clear the navigation state
-          navigate(location.pathname, { replace: true, state: {} });
-        }
       } catch (err: any) {
         console.error('Error loading locations:', err);
         setError(err.response?.data?.message || 'Failed to load locations');
@@ -51,7 +41,19 @@ export function TravelPage() {
     };
 
     loadData();
-  }, [user, navigate, location]);
+  }, [user, navigate]);
+
+  // Separate effect to handle resume travel state
+  useEffect(() => {
+    const state = location.state as any;
+    if (state?.resumeTravel) {
+      setTravelDestination(state.destination);
+      setTravelProgress(state.progress);
+      setTravelDistance(state.distance);
+      // Clear the navigation state
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state, navigate, location.pathname]);
 
   const handleStartTravel = (destination: string) => {
     setTravelDestination(destination);
