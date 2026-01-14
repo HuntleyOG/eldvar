@@ -25,12 +25,12 @@ async function main() {
     { skey: 'attack', name: 'Attack' },
     { skey: 'strength', name: 'Strength' },
     { skey: 'defense', name: 'Defense' },
-    { skey: 'health', name: 'Health' },
+    { skey: 'constitution', name: 'Constitution' },
     { skey: 'range', name: 'Range' },
     { skey: 'magic', name: 'Magic' },
+    { skey: 'pathfinding', name: 'Pathfinding' },
     { skey: 'mining', name: 'Mining' },
-    { skey: 'crafting', name: 'Crafting' },
-    { skey: 'blacksmithing', name: 'Blacksmithing' },
+    { skey: 'smithing', name: 'Smithing' },
   ];
 
   for (const skill of skills) {
@@ -190,25 +190,6 @@ async function main() {
     await prisma.mob.create({ data: mob });
   }
   console.log(`✅ Created ${mobs.length} sample mobs`);
-
-  // 6. Create Admin User (for testing)
-  console.log('Creating admin user...');
-  const bcrypt = require('bcrypt');
-  const hashedPassword = await bcrypt.hash('admin123', 10);
-
-  await prisma.user.upsert({
-    where: { username: 'admin' },
-    update: {},
-    create: {
-      username: 'admin',
-      password: hashedPassword,
-      email: 'admin@eldvar.com',
-      role: 'ADMIN',
-      displayName: 'Administrator',
-      verified: true,
-    },
-  });
-  console.log('✅ Created admin user (username: admin, password: admin123)');
 
   console.log('🎉 Seeding completed!');
 }
