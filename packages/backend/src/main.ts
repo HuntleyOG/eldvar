@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
-import session from 'express-session';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -11,21 +10,6 @@ async function bootstrap() {
 
   // Security
   app.use(helmet());
-
-  // Session
-  app.use(
-    session({
-      secret: configService.get<string>('SESSION_SECRET')!,
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        maxAge: configService.get<number>('SESSION_MAX_AGE'),
-        httpOnly: true,
-        secure: configService.get<string>('NODE_ENV') === 'production',
-        sameSite: 'lax',
-      },
-    }),
-  );
 
   // CORS
   app.enableCors({

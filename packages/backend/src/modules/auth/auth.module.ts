@@ -6,13 +6,12 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { SessionSerializer } from './session.serializer';
-import { UsersModule } from '../users/users.module';
+import { PrismaModule } from '../../common/prisma/prisma.module';
 
 @Module({
   imports: [
-    UsersModule,
-    PassportModule.register({ session: true }),
+    PrismaModule,
+    PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -24,7 +23,7 @@ import { UsersModule } from '../users/users.module';
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, SessionSerializer],
+  providers: [AuthService, LocalStrategy, JwtStrategy],
   controllers: [AuthController],
   exports: [AuthService],
 })
