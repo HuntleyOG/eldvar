@@ -148,8 +148,10 @@ export interface Location {
 }
 
 export interface TravelResponse {
+  encounter: boolean;
   message: string;
   location: Location;
+  battle?: Battle;
 }
 
 export const locationApi = {
@@ -170,6 +172,112 @@ export const locationApi = {
 
   travelTo: async (destination: string): Promise<TravelResponse> => {
     const response = await api.post<TravelResponse>('/locations/travel', { destination });
+    return response.data;
+  },
+};
+
+// Combat API
+export enum CombatStyle {
+  ATTACK = 'ATTACK',
+  STRENGTH = 'STRENGTH',
+  DEFENSE = 'DEFENSE',
+  RANGE = 'RANGE',
+  MAGIC = 'MAGIC',
+}
+
+export enum BattleStatus {
+  ONGOING = 'ONGOING',
+  WON = 'WON',
+  LOST = 'LOST',
+  FLED = 'FLED',
+}
+
+export interface Mob {
+  id: number;
+  name: string;
+  level: number;
+  hp: number;
+  attack: number;
+  defense: number;
+  magic: number;
+  range: number;
+  rewardXp: number;
+  rewardGold: number;
+}
+
+export interface BattleTurn {
+  id: string;
+  battleId: string;
+  turnNo: number;
+  actor: 'PLAYER' | 'MOB';
+  action: string;
+  damage: number;
+  charHpAfter: number;
+  mobHpAfter: number;
+  logText: string;
+}
+
+export interface Battle {
+  id: string;
+  userId: number;
+  mobId: number;
+  charName: string;
+  charHpCurrent: number;
+  charHpMax: number;
+  mobName: string;
+  mobHpCurrent: number;
+  mobHpMax: number;
+  rewardXp: number;
+  rewardGold: number;
+  floor: number;
+  voidIntensity: number;
+  combatStyle: CombatStyle;
+  status: BattleStatus;
+  createdAt: string;
+  updatedAt: string;
+  mob?: Mob;
+  turns?: BattleTurn[];
+}
+
+export interface StartBattleResponse {
+  battle: Battle;
+  message: string;
+}
+
+export interface TakeTurnResponse {
+  battle: Battle;
+  message?: string;
+}
+
+export const combatApi = {
+  startBattle: async (mobId: number, floor?: number): Promise<StartBattleResponse> => {
+    const response = await api.post<StartBattleResponse>('/combat/start', {
+      mobId,
+      floor,
+      voidIntensity: 0,
+    });
+    return response.data;
+  },
+
+  takeTurn: async (battleId: string, combatStyle: CombatStyle): Promise<TakeTurnResponse> => {
+    const response = await api.post<TakeTurnResponse>(`/combat/${battleId}/turn`, {
+      combatStyle,
+    });
+    return response.data;
+  },
+
+  flee: async (battleId: string): Promise<TakeTurnResponse> => {
+    const response = await api.post<TakeTurnResponse>(`/combat/${battleId}/flee`);
+    return response.data;
+  },
+
+  getBattle: async (battleId: string): Promise<Battle> => {
+    const response = await api.get<Battle>(`/combat/${battleId}`);
+    return response.data;
+  },
+
+  getCurrentBattle: async (): Promise<Battle | null> => {
+    const response = await api.get<Battle | null>('/combat/current/battle');
     return response.data;
   },
 };

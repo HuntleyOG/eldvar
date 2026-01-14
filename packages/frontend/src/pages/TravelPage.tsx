@@ -10,6 +10,9 @@ export function TravelPage() {
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
   const [traveling, setTraveling] = useState(false);
+  const [travelDestination, setTravelDestination] = useState<string | null>(null);
+  const [travelProgress, setTravelProgress] = useState(0);
+  const [travelDistance, setTravelDistance] = useState(10); // Default 10 steps
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -39,20 +42,46 @@ export function TravelPage() {
     loadData();
   }, [user, navigate]);
 
-  const handleTravel = async (destination: string) => {
-    if (traveling) return;
+  const handleStartTravel = (destination: string) => {
+    setTravelDestination(destination);
+    setTravelProgress(0);
+    setTravelDistance(Math.floor(Math.random() * 6) + 5); // Random 5-10 steps
+    setError(null);
+  };
+
+  const handleCancelTravel = () => {
+    setTravelDestination(null);
+    setTravelProgress(0);
+    setError(null);
+  };
+
+  const handleTakeStep = async () => {
+    if (!travelDestination || traveling) return;
 
     try {
       setTraveling(true);
       setError(null);
-      const response = await locationApi.travelTo(destination);
-      setCurrentLocation(response.location);
 
-      // Show success message
-      alert(response.message);
+      const response = await locationApi.travelTo(travelDestination);
 
-      // Navigate back to town
-      navigate('/town');
+      // Check for encounter
+      if (response.encounter && response.battle) {
+        // Redirect to combat
+        navigate(`/combat/${response.battle.id}`);
+        return;
+      }
+
+      // No encounter - increment progress
+      const newProgress = travelProgress + 1;
+      setTravelProgress(newProgress);
+
+      // Check if arrived
+      if (newProgress >= travelDistance) {
+        setCurrentLocation(response.location);
+        alert(`${response.message}\n\nYou have arrived!`);
+        setTravelDestination(null);
+        setTravelProgress(0);
+      }
     } catch (err: any) {
       console.error('Error traveling:', err);
       setError(err.response?.data?.message || 'Failed to travel');
@@ -125,81 +154,135 @@ export function TravelPage() {
           </div>
         )}
 
-        {/* Locations Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {locations.map((location) => {
-            const isCurrentLocation = currentLocation?.slug === location.slug;
+        {/* Traveling UI */}
+        {travelDestination ? (
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-gray-800 rounded-lg p-8 border border-blue-600">
+              <h2 className="text-3xl font-bold mb-6 text-center">
+                Traveling to{' '}
+                {locations.find((l) => l.slug === travelDestination)?.name ||
+                  'destination'}
+              </h2>
 
-            return (
-              <div
-                key={location.id}
-                className={`bg-gray-800 rounded-lg overflow-hidden border ${
-                  isCurrentLocation
-                    ? 'border-blue-500 ring-2 ring-blue-500/50'
-                    : 'border-gray-700'
-                }`}
-              >
-                {/* Location Image */}
-                {location.imagePath ? (
+              {/* Progress Bar */}
+              <div className="mb-6">
+                <div className="flex justify-between mb-2">
+                  <span className="text-sm font-semibold">Progress</span>
+                  <span className="text-sm">
+                    {travelProgress} / {travelDistance} steps
+                  </span>
+                </div>
+                <div className="w-full bg-gray-700 rounded-full h-6">
                   <div
-                    className="h-40 bg-cover bg-center"
+                    className="bg-gradient-to-r from-blue-500 to-purple-600 h-6 rounded-full transition-all duration-300 flex items-center justify-center text-xs font-bold"
                     style={{
-                      backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url(${location.imagePath})`,
+                      width: `${Math.max(5, (travelProgress / travelDistance) * 100)}%`,
                     }}
-                  />
-                ) : (
-                  <div className="h-40 bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
-                    <span className="text-6xl">🏰</span>
-                  </div>
-                )}
-
-                {/* Location Info */}
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-3">
-                    <h2 className="text-2xl font-bold">{location.name}</h2>
-                    {isCurrentLocation && (
-                      <span className="bg-blue-600 text-xs font-bold px-2 py-1 rounded">
-                        CURRENT
-                      </span>
-                    )}
-                  </div>
-
-                  {location.shortBlurb && (
-                    <p className="text-gray-400 mb-4">{location.shortBlurb}</p>
-                  )}
-
-                  {location.loreText && (
-                    <p className="text-gray-500 text-sm italic mb-4 line-clamp-2">
-                      {location.loreText}
-                    </p>
-                  )}
-
-                  <button
-                    onClick={() => handleTravel(location.slug)}
-                    disabled={isCurrentLocation || traveling}
-                    className={`w-full font-bold py-3 px-4 rounded-lg transition ${
-                      isCurrentLocation
-                        ? 'bg-gray-600 cursor-not-allowed text-gray-400'
-                        : traveling
-                        ? 'bg-gray-600 cursor-wait text-gray-400'
-                        : 'bg-blue-600 hover:bg-blue-700 text-white'
-                    }`}
                   >
-                    {isCurrentLocation
-                      ? 'You are here'
-                      : traveling
-                      ? 'Traveling...'
-                      : `Travel to ${location.name}`}
-                  </button>
+                    {Math.round((travelProgress / travelDistance) * 100)}%
+                  </div>
                 </div>
               </div>
-            );
-          })}
-        </div>
+
+              {/* Actions */}
+              <div className="space-y-3">
+                <button
+                  onClick={handleTakeStep}
+                  disabled={traveling}
+                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold py-4 px-6 rounded-lg transition text-lg"
+                >
+                  {traveling ? '🚶 Taking Step...' : '🚶 Take Step Forward'}
+                </button>
+                <button
+                  onClick={handleCancelTravel}
+                  disabled={traveling}
+                  className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold py-2 px-6 rounded-lg transition"
+                >
+                  Cancel Travel
+                </button>
+              </div>
+
+              <div className="mt-6 p-4 bg-yellow-900/30 border border-yellow-600 rounded-lg">
+                <p className="text-yellow-200 text-sm text-center">
+                  ⚠️ Each step has a chance of encountering enemies, finding loot, or gaining
+                  pathfinding XP!
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* Locations Grid */
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {locations.map((location) => {
+              const isCurrentLocation = currentLocation?.slug === location.slug;
+
+              return (
+                <div
+                  key={location.id}
+                  className={`bg-gray-800 rounded-lg overflow-hidden border ${
+                    isCurrentLocation
+                      ? 'border-blue-500 ring-2 ring-blue-500/50'
+                      : 'border-gray-700'
+                  }`}
+                >
+                  {/* Location Image */}
+                  {location.imagePath ? (
+                    <div
+                      className="h-40 bg-cover bg-center"
+                      style={{
+                        backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url(${location.imagePath})`,
+                      }}
+                    />
+                  ) : (
+                    <div className="h-40 bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
+                      <span className="text-6xl">🏰</span>
+                    </div>
+                  )}
+
+                  {/* Location Info */}
+                  <div className="p-6">
+                    <div className="flex justify-between items-start mb-3">
+                      <h2 className="text-2xl font-bold">{location.name}</h2>
+                      {isCurrentLocation && (
+                        <span className="bg-blue-600 text-xs font-bold px-2 py-1 rounded">
+                          CURRENT
+                        </span>
+                      )}
+                    </div>
+
+                    {location.shortBlurb && (
+                      <p className="text-gray-400 mb-4">{location.shortBlurb}</p>
+                    )}
+
+                    {location.loreText && (
+                      <p className="text-gray-500 text-sm italic mb-4 line-clamp-2">
+                        {location.loreText}
+                      </p>
+                    )}
+
+                    <button
+                      onClick={() => handleStartTravel(location.slug)}
+                      disabled={isCurrentLocation}
+                      className={`w-full font-bold py-3 px-4 rounded-lg transition ${
+                        isCurrentLocation
+                          ? 'bg-gray-600 cursor-not-allowed text-gray-400'
+                          : 'bg-blue-600 hover:bg-blue-700 text-white'
+                      }`}
+                    >
+                      {isCurrentLocation
+                        ? 'You are here'
+                        : `Travel to ${location.name}`}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Footer Info */}
         <div className="mt-8 text-center text-gray-500 text-sm">
-          <p>ℹ️ Travel is currently instant. Time-based travel with map visualization coming soon!</p>
+          <p>ℹ️ Step-based travel - each step has chances for encounters, loot, and XP!</p>
         </div>
       </div>
     </div>
