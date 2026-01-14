@@ -23,65 +23,65 @@ export function GamePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
+    <div className="min-h-screen bg-pixel-bg text-pixel-text">
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent">
-              Welcome to Eldvar
+            <h1 className="text-4xl font-bold text-pixel-primary" style={{ textShadow: '4px 4px 0px rgba(0,0,0,0.5)' }}>
+              WELCOME TO ELDVAR
             </h1>
-            <p className="text-gray-400 mt-2">
+            <p className="text-pixel-muted mt-2">
               Hello, {user.displayName || user.username}!
             </p>
           </div>
           <button
             onClick={handleLogout}
-            className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition"
+            className="btn-pixel bg-pixel-danger hover:bg-red-700 text-white"
           >
-            Logout
+            LOGOUT
           </button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <h2 className="text-2xl font-bold mb-4 text-blue-400">Your Profile</h2>
-            <div className="space-y-2 text-gray-300">
-              <p><span className="font-semibold">Username:</span> {user.username}</p>
-              <p><span className="font-semibold">Level:</span> {user.level}</p>
-              <p><span className="font-semibold">Role:</span> {user.role}</p>
-              {user.email && <p><span className="font-semibold">Email:</span> {user.email}</p>}
+          <div className="panel-pixel p-6">
+            <h2 className="text-2xl font-bold mb-4 text-pixel-primary">YOUR PROFILE</h2>
+            <div className="space-y-2 text-pixel-text">
+              <p><span className="font-bold">Username:</span> {user.username}</p>
+              <p><span className="font-bold">Level:</span> {user.level}</p>
+              <p><span className="font-bold">Role:</span> {user.role}</p>
+              {user.email && <p><span className="font-bold">Email:</span> {user.email}</p>}
               <p>
-                <span className="font-semibold">Status:</span>{' '}
-                <span className={user.verified ? 'text-green-400' : 'text-yellow-400'}>
+                <span className="font-bold">Status:</span>{' '}
+                <span className={user.verified ? 'text-pixel-success' : 'text-pixel-warning'}>
                   {user.verified ? 'Verified' : 'Unverified'}
                 </span>
               </p>
             </div>
           </div>
 
-          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <h2 className="text-2xl font-bold mb-4 text-purple-400">Quick Actions</h2>
+          <div className="panel-pixel p-6">
+            <h2 className="text-2xl font-bold mb-4 text-pixel-secondary">QUICK ACTIONS</h2>
             <div className="space-y-3">
               <button
                 onClick={() => navigate('/town')}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition"
+                className="w-full btn-pixel bg-pixel-primary hover:bg-red-600 text-white"
               >
-                🏘️ Visit Town
+                🏘️ VISIT TOWN
               </button>
               <button
                 onClick={() => navigate('/profile')}
-                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition"
+                className="w-full btn-pixel bg-pixel-success hover:bg-green-600 text-white"
               >
-                👤 View Profile
+                👤 VIEW PROFILE
               </button>
-              <button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition">
-                ⚔️ Enter Combat
+              <button className="w-full btn-pixel bg-pixel-secondary hover:bg-purple-600 text-white">
+                ⚔️ ENTER COMBAT
               </button>
             </div>
           </div>
         </div>
 
-        <div className="mt-8 text-center text-gray-500">
+        <div className="mt-8 text-center text-pixel-muted">
           <p>🚧 Game features coming soon 🚧</p>
         </div>
       </div>
