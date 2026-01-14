@@ -136,3 +136,40 @@ export const userApi = {
     return response.data;
   },
 };
+
+// Locations API
+export interface Location {
+  id: number;
+  slug: string;
+  name: string;
+  shortBlurb?: string;
+  imagePath?: string;
+  loreText?: string;
+}
+
+export interface TravelResponse {
+  message: string;
+  location: Location;
+}
+
+export const locationApi = {
+  getAllLocations: async (): Promise<Location[]> => {
+    const response = await api.get<Location[]>('/locations');
+    return response.data;
+  },
+
+  getLocationBySlug: async (slug: string): Promise<Location> => {
+    const response = await api.get<Location>(`/locations/${slug}`);
+    return response.data;
+  },
+
+  getCurrentLocation: async (): Promise<Location> => {
+    const response = await api.get<Location>('/locations/current/location');
+    return response.data;
+  },
+
+  travelTo: async (destination: string): Promise<TravelResponse> => {
+    const response = await api.post<TravelResponse>('/locations/travel', { destination });
+    return response.data;
+  },
+};

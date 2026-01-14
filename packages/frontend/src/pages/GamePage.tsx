@@ -60,16 +60,22 @@ export function GamePage() {
           </div>
 
           <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <h2 className="text-2xl font-bold mb-4 text-purple-400">Quick Start</h2>
+            <h2 className="text-2xl font-bold mb-4 text-purple-400">Quick Actions</h2>
             <div className="space-y-3">
-              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">
-                Enter Combat
+              <button
+                onClick={() => navigate('/town')}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition"
+              >
+                🏘️ Visit Town
               </button>
-              <button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition">
-                View Skills
+              <button
+                onClick={() => navigate('/profile')}
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition"
+              >
+                👤 View Profile
               </button>
               <button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition">
-                Explore World
+                ⚔️ Enter Combat
               </button>
             </div>
           </div>
