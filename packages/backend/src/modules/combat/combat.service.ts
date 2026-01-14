@@ -78,7 +78,7 @@ export class CombatService {
     });
 
     return {
-      battle,
+      battle: this.serializeBattle(battle),
       message: `You encountered a ${mob.name}!`,
     };
   }
@@ -218,7 +218,7 @@ export class CombatService {
       throw new NotFoundException('Battle not found');
     }
 
-    return battle;
+    return this.serializeBattle(battle);
   }
 
   async getCurrentBattle(userId: number) {
@@ -235,7 +235,7 @@ export class CombatService {
       },
     });
 
-    return battle;
+    return battle ? this.serializeBattle(battle) : null;
   }
 
   // Helper methods
@@ -258,7 +258,7 @@ export class CombatService {
     }
 
     return {
-      battle,
+      battle: this.serializeBattle(battle),
       message: this.getBattleEndMessage(status, battle),
     };
   }
@@ -446,5 +446,18 @@ export class CombatService {
       default:
         return 'Battle ended.';
     }
+  }
+
+  private serializeBattle(battle: any) {
+    // Convert BigInt fields to strings for JSON serialization
+    return {
+      ...battle,
+      id: battle.id.toString(),
+      turns: battle.turns?.map((turn: any) => ({
+        ...turn,
+        id: turn.id.toString(),
+        battleId: turn.battleId.toString(),
+      })) || [],
+    };
   }
 }
