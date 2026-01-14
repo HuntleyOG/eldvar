@@ -86,10 +86,8 @@ export function CombatPage() {
         setMessage(response.message);
       }
 
-      // Return to town after fleeing
-      setTimeout(() => {
-        navigate('/town');
-      }, 2000);
+      // Don't auto-navigate - let the user click "Continue Journey" or "Return to Town"
+      setActing(false);
     } catch (err: any) {
       console.error('Error fleeing:', err);
       setError(err.response?.data?.message || 'Failed to flee');
