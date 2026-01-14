@@ -14,7 +14,6 @@ export function AdminPanel() {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   // Check if user has admin access
