@@ -148,8 +148,10 @@ export interface Location {
 }
 
 export interface TravelResponse {
+  encounter: boolean;
   message: string;
   location: Location;
+  battle?: Battle;
 }
 
 export const locationApi = {
