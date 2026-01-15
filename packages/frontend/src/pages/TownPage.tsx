@@ -76,24 +76,24 @@ export function TownPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white flex items-center justify-center">
-        <div className="text-2xl">Loading...</div>
+      <div className="min-h-screen bg-pixel-bg text-pixel-text flex items-center justify-center">
+        <div className="text-2xl font-bold">LOADING...</div>
       </div>
     );
   }
 
   if (error || !location) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
+      <div className="min-h-screen bg-pixel-bg text-pixel-text">
         <div className="container mx-auto px-4 py-8">
-          <div className="bg-red-900/50 border border-red-600 rounded-lg p-6 max-w-2xl mx-auto">
-            <h2 className="text-2xl font-bold mb-4">Error</h2>
+          <div className="bg-pixel-danger border-4 border-black p-6 max-w-2xl mx-auto">
+            <h2 className="text-2xl font-bold mb-4">ERROR</h2>
             <p>{error || 'Location not found'}</p>
             <button
               onClick={() => navigate('/game')}
-              className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition"
+              className="mt-4 btn-pixel bg-pixel-primary hover:bg-red-600 text-white"
             >
-              Back to Game
+              BACK TO GAME
             </button>
           </div>
         </div>
@@ -102,29 +102,30 @@ export function TownPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
+    <div className="min-h-screen bg-pixel-bg text-pixel-text">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <button
             onClick={() => navigate('/game')}
-            className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg transition"
+            className="btn-pixel bg-pixel-muted hover:bg-gray-600 text-white"
           >
-            ← Back
+            ← BACK
           </button>
-          <div className="text-sm text-gray-400">
-            Town
+          <div className="text-sm text-pixel-muted">
+            TOWN
           </div>
         </div>
 
         {/* Location Header */}
-        <div className="bg-gray-800 rounded-lg overflow-hidden mb-6 border border-gray-700">
+        <div className="panel-pixel overflow-hidden mb-6">
           {/* Banner Image */}
           {location.imagePath && (
             <div
               className="h-48 bg-cover bg-center"
               style={{
-                backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url(${location.imagePath})`,
+                backgroundImage: `url(${location.imagePath})`,
+                filter: 'contrast(1.2) saturate(0.9)',
               }}
             />
           )}
@@ -133,24 +134,24 @@ export function TownPage() {
           <div className="p-6">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent">
-                  {location.name}
+                <h1 className="text-4xl font-bold mb-2 text-pixel-primary" style={{ textShadow: '3px 3px 0px rgba(0,0,0,0.5)' }}>
+                  {location.name.toUpperCase()}
                 </h1>
                 {location.shortBlurb && (
-                  <p className="text-gray-400">{location.shortBlurb}</p>
+                  <p className="text-pixel-muted">{location.shortBlurb}</p>
                 )}
               </div>
               <button
                 onClick={() => navigate('/travel')}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition whitespace-nowrap"
+                className="btn-pixel bg-pixel-primary hover:bg-red-600 text-white whitespace-nowrap"
               >
-                🗺️ Change Location
+                🗺️ CHANGE LOCATION
               </button>
             </div>
 
             {location.loreText && (
-              <div className="mt-4 p-4 bg-gray-900/50 rounded-lg border border-gray-700">
-                <p className="text-gray-300 text-sm italic">{location.loreText}</p>
+              <div className="mt-4 p-4 bg-pixel-bg border-4 border-black">
+                <p className="text-pixel-text text-sm italic">{location.loreText}</p>
               </div>
             )}
           </div>
@@ -159,24 +160,24 @@ export function TownPage() {
         {/* Town Services */}
         <div className="space-y-6">
           {townServices.map((section) => (
-            <div key={section.section} className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-              <h2 className="text-2xl font-bold mb-4 text-blue-400">{section.section}</h2>
+            <div key={section.section} className="panel-pixel p-6">
+              <h2 className="text-2xl font-bold mb-4 text-pixel-primary">{section.section.toUpperCase()}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {section.buildings.map((building) => (
                   <button
                     key={building.name}
                     onClick={() => handleServiceClick(building.path)}
-                    className="bg-gray-900/50 hover:bg-gray-900 rounded-lg p-4 border border-gray-700 hover:border-blue-500 transition text-left group"
+                    className="bg-pixel-bg hover:bg-pixel-accent border-4 border-black p-4 transition text-left group"
                   >
                     <div className="flex items-start gap-3">
                       <div className="text-3xl group-hover:scale-110 transition-transform">
                         {building.icon}
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-bold text-lg mb-1 group-hover:text-blue-400 transition">
+                        <h3 className="font-bold text-lg mb-1 group-hover:text-pixel-primary transition">
                           {building.name}
                         </h3>
-                        <p className="text-sm text-gray-400">{building.description}</p>
+                        <p className="text-sm text-pixel-muted">{building.description}</p>
                       </div>
                     </div>
                   </button>
@@ -187,22 +188,22 @@ export function TownPage() {
 
           {/* Admin Panel (only visible to admins) */}
           {user && ['ADMIN', 'GOVERNOR', 'MODERATOR'].includes(user.role) && (
-            <div className="bg-red-900/20 rounded-lg p-6 border border-red-600">
-              <h2 className="text-2xl font-bold mb-4 text-red-400">Administration</h2>
+            <div className="bg-pixel-danger border-4 border-black p-6">
+              <h2 className="text-2xl font-bold mb-4 text-white">ADMINISTRATION</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <button
                   onClick={() => navigate('/admin')}
-                  className="bg-red-900/50 hover:bg-red-900 rounded-lg p-4 border border-red-700 hover:border-red-500 transition text-left group"
+                  className="bg-red-900 hover:bg-red-800 border-4 border-black p-4 transition text-left group"
                 >
                   <div className="flex items-start gap-3">
                     <div className="text-3xl group-hover:scale-110 transition-transform">
                       🛡️
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-bold text-lg mb-1 group-hover:text-red-400 transition">
-                        Admin Panel
+                      <h3 className="font-bold text-lg mb-1 text-white">
+                        ADMIN PANEL
                       </h3>
-                      <p className="text-sm text-red-300">Manage users and view statistics</p>
+                      <p className="text-sm text-red-200">Manage users and view statistics</p>
                     </div>
                   </div>
                 </button>
@@ -212,7 +213,7 @@ export function TownPage() {
         </div>
 
         {/* Footer */}
-        <div className="mt-8 text-center text-gray-500 text-sm">
+        <div className="mt-8 text-center text-pixel-muted text-sm">
           <p>🚧 Most services are under construction and will be available soon 🚧</p>
         </div>
       </div>

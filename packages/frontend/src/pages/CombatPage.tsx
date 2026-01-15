@@ -160,24 +160,24 @@ export function CombatPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white flex items-center justify-center">
-        <div className="text-2xl">Loading battle...</div>
+      <div className="min-h-screen bg-pixel-bg text-pixel-text flex items-center justify-center">
+        <div className="text-2xl font-bold">LOADING BATTLE...</div>
       </div>
     );
   }
 
   if (error && !battle) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
+      <div className="min-h-screen bg-pixel-bg text-pixel-text">
         <div className="container mx-auto px-4 py-8">
-          <div className="bg-red-900/50 border border-red-600 rounded-lg p-6 max-w-2xl mx-auto">
-            <h2 className="text-2xl font-bold mb-4">Error</h2>
+          <div className="bg-pixel-danger border-4 border-black p-6 max-w-2xl mx-auto">
+            <h2 className="text-2xl font-bold mb-4">ERROR</h2>
             <p>{error}</p>
             <button
               onClick={() => navigate('/town')}
-              className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition"
+              className="mt-4 btn-pixel bg-pixel-primary hover:bg-red-600 text-white"
             >
-              Return to Town
+              RETURN TO TOWN
             </button>
           </div>
         </div>
@@ -195,28 +195,28 @@ export function CombatPage() {
   const playerFled = battle.status === BattleStatus.FLED;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
+    <div className="min-h-screen bg-pixel-bg text-pixel-text">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-6">
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-red-400 to-orange-600 bg-clip-text text-transparent">
-            ⚔️ Combat ⚔️
+          <h1 className="text-4xl font-bold mb-2 text-pixel-primary" style={{ textShadow: '4px 4px 0px rgba(0,0,0,0.5)' }}>
+            ⚔️ COMBAT ⚔️
           </h1>
-          <p className="text-gray-400">
-            {battleEnded ? 'Battle Ended' : 'Fight for your life!'}
+          <p className="text-pixel-muted">
+            {battleEnded ? 'BATTLE ENDED' : 'FIGHT FOR YOUR LIFE!'}
           </p>
         </div>
 
         {/* Messages */}
         {message && (
-          <div className="bg-green-900/50 border border-green-600 rounded-lg p-4 mb-6 max-w-3xl mx-auto">
-            <p className="text-green-200 font-bold text-center">{message}</p>
+          <div className="bg-pixel-success border-4 border-black p-4 mb-6 max-w-3xl mx-auto">
+            <p className="text-white font-bold text-center">{message}</p>
           </div>
         )}
 
         {error && (
-          <div className="bg-red-900/50 border border-red-600 rounded-lg p-4 mb-6 max-w-3xl mx-auto">
-            <p className="text-red-200">{error}</p>
+          <div className="bg-pixel-danger border-4 border-black p-4 mb-6 max-w-3xl mx-auto">
+            <p className="text-white">{error}</p>
           </div>
         )}
 
@@ -224,21 +224,21 @@ export function CombatPage() {
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             {/* Player */}
-            <div className="bg-gray-800 rounded-lg p-6 border border-blue-600">
-              <h2 className="text-2xl font-bold mb-4 text-blue-400">
-                {battle.charName} (You)
+            <div className="panel-pixel p-6 border-pixel-primary">
+              <h2 className="text-2xl font-bold mb-4 text-pixel-primary">
+                {battle.charName.toUpperCase()} (YOU)
               </h2>
               <div className="space-y-3">
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span className="text-sm font-semibold">HP</span>
+                    <span className="text-sm font-bold">HP</span>
                     <span className="text-sm">
                       {battle.charHpCurrent} / {battle.charHpMax}
                     </span>
                   </div>
-                  <div className="w-full bg-gray-700 rounded-full h-6">
+                  <div className="w-full bg-pixel-bg border-4 border-black h-6">
                     <div
-                      className="bg-gradient-to-r from-green-500 to-blue-500 h-6 rounded-full transition-all duration-300 flex items-center justify-center text-xs font-bold"
+                      className="bg-pixel-success h-6 transition-all duration-300 flex items-center justify-center text-xs font-bold"
                       style={{
                         width: `${getHpPercentage(battle.charHpCurrent, battle.charHpMax)}%`,
                       }}
@@ -251,22 +251,22 @@ export function CombatPage() {
             </div>
 
             {/* Mob */}
-            <div className="bg-gray-800 rounded-lg p-6 border border-red-600">
-              <h2 className="text-2xl font-bold mb-4 text-red-400">
-                {battle.mobName}
-                {battle.mob && <span className="text-sm ml-2">Lv {battle.mob.level}</span>}
+            <div className="panel-pixel p-6 border-pixel-danger">
+              <h2 className="text-2xl font-bold mb-4 text-pixel-danger">
+                {battle.mobName.toUpperCase()}
+                {battle.mob && <span className="text-sm ml-2">LV {battle.mob.level}</span>}
               </h2>
               <div className="space-y-3">
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span className="text-sm font-semibold">HP</span>
+                    <span className="text-sm font-bold">HP</span>
                     <span className="text-sm">
                       {battle.mobHpCurrent} / {battle.mobHpMax}
                     </span>
                   </div>
-                  <div className="w-full bg-gray-700 rounded-full h-6">
+                  <div className="w-full bg-pixel-bg border-4 border-black h-6">
                     <div
-                      className="bg-gradient-to-r from-red-500 to-orange-500 h-6 rounded-full transition-all duration-300 flex items-center justify-center text-xs font-bold"
+                      className="bg-pixel-danger h-6 transition-all duration-300 flex items-center justify-center text-xs font-bold"
                       style={{
                         width: `${getHpPercentage(battle.mobHpCurrent, battle.mobHpMax)}%`,
                       }}
@@ -281,21 +281,35 @@ export function CombatPage() {
 
           {/* Actions */}
           {!battleEnded && (
-            <div className="bg-gray-800 rounded-lg p-6 border border-gray-700 mb-6">
-              <h3 className="text-xl font-bold mb-4">Choose Your Action</h3>
+            <div className="panel-pixel p-6 mb-6">
+              <h3 className="text-xl font-bold mb-4">CHOOSE YOUR ACTION</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
                 {Object.values(CombatStyle).map((style) => {
                   const info = getCombatStyleInfo(style);
+                  const bgColors: Record<string, string> = {
+                    red: 'bg-pixel-danger',
+                    orange: 'bg-pixel-warning',
+                    blue: 'bg-pixel-primary',
+                    green: 'bg-pixel-success',
+                    purple: 'bg-pixel-secondary',
+                  };
+                  const hoverColors: Record<string, string> = {
+                    red: 'hover:bg-red-600',
+                    orange: 'hover:bg-orange-600',
+                    blue: 'hover:bg-red-600',
+                    green: 'hover:bg-green-600',
+                    purple: 'hover:bg-purple-600',
+                  };
                   return (
                     <button
                       key={style}
                       onClick={() => handleAttack(style)}
                       disabled={acting}
-                      className={`bg-${info.color}-600 hover:bg-${info.color}-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition`}
+                      className={`btn-pixel ${bgColors[info.color]} ${hoverColors[info.color]} disabled:bg-pixel-muted disabled:cursor-not-allowed text-white py-3`}
                       title={info.desc}
                     >
                       <div className="text-2xl mb-1">{info.icon}</div>
-                      <div className="text-sm">{info.name}</div>
+                      <div className="text-sm">{info.name.toUpperCase()}</div>
                     </button>
                   );
                 })}
@@ -303,9 +317,9 @@ export function CombatPage() {
               <button
                 onClick={handleFlee}
                 disabled={acting}
-                className="w-full bg-gray-600 hover:bg-gray-700 disabled:bg-gray-800 disabled:cursor-not-allowed text-white font-bold py-2 px-4 rounded-lg transition"
+                className="w-full btn-pixel bg-pixel-muted hover:bg-gray-700 disabled:bg-gray-800 disabled:cursor-not-allowed text-white"
               >
-                🏃 Flee
+                🏃 FLEE
               </button>
             </div>
           )}
@@ -313,71 +327,71 @@ export function CombatPage() {
           {/* Battle End Screen */}
           {battleEnded && (
             <div
-              className={`rounded-lg p-6 mb-6 border-2 ${
+              className={`border-4 border-black p-6 mb-6 ${
                 playerWon
-                  ? 'bg-green-900/50 border-green-500'
+                  ? 'bg-pixel-success'
                   : playerLost
-                  ? 'bg-red-900/50 border-red-500'
-                  : 'bg-yellow-900/50 border-yellow-500'
+                  ? 'bg-pixel-danger'
+                  : 'bg-pixel-warning'
               }`}
             >
-              <h2 className="text-3xl font-bold mb-4 text-center">
-                {playerWon && '🎉 Victory!'}
-                {playerLost && '💀 Defeated'}
-                {playerFled && '🏃 Fled'}
+              <h2 className="text-3xl font-bold mb-4 text-center text-white">
+                {playerWon && '🎉 VICTORY!'}
+                {playerLost && '💀 DEFEATED'}
+                {playerFled && '🏃 FLED'}
               </h2>
               {playerWon && (
-                <div className="text-center space-y-2">
-                  <p className="text-xl">You defeated {battle.mobName}!</p>
-                  <p className="text-yellow-400 font-bold text-2xl">
-                    +{battle.rewardGold} Gold
+                <div className="text-center space-y-2 text-white">
+                  <p className="text-xl">YOU DEFEATED {battle.mobName.toUpperCase()}!</p>
+                  <p className="font-bold text-2xl">
+                    +{battle.rewardGold} GOLD
                   </p>
-                  <p className="text-blue-400 font-bold text-2xl">
+                  <p className="font-bold text-2xl">
                     +{battle.rewardXp} XP
                   </p>
                 </div>
               )}
               {playerLost && (
-                <p className="text-center text-xl">
-                  You were defeated by {battle.mobName}...
+                <p className="text-center text-xl text-white">
+                  YOU WERE DEFEATED BY {battle.mobName.toUpperCase()}...
                 </p>
               )}
               {playerFled && (
-                <p className="text-center text-xl">You fled from {battle.mobName}.</p>
+                <p className="text-center text-xl text-white">YOU FLED FROM {battle.mobName.toUpperCase()}.</p>
               )}
               <button
                 onClick={handleContinue}
-                className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition"
+                className="mt-6 w-full btn-pixel bg-pixel-primary hover:bg-red-600 text-white py-3"
               >
                 {battle.travelDestination &&
                 (battle.status === BattleStatus.WON || battle.status === BattleStatus.FLED)
-                  ? '🚶 Continue Journey'
-                  : 'Return to Town'}
+                  ? '🚶 CONTINUE JOURNEY'
+                  : 'RETURN TO TOWN'}
               </button>
             </div>
           )}
 
           {/* Combat Log */}
-          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <h3 className="text-xl font-bold mb-4">Combat Log</h3>
+          <div className="panel-pixel p-6">
+            <h3 className="text-xl font-bold mb-4">COMBAT LOG</h3>
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {battle.turns && battle.turns.length > 0 ? (
                 battle.turns.map((turn) => (
                   <div
                     key={turn.id}
-                    className={`p-3 rounded ${
+                    className={`p-3 border-4 border-black ${
                       turn.actor === 'PLAYER'
-                        ? 'bg-blue-900/50 border-l-4 border-blue-500'
-                        : 'bg-red-900/50 border-l-4 border-red-500'
+                        ? 'bg-pixel-primary'
+                        : 'bg-pixel-danger'
                     }`}
                   >
-                    <p className="text-sm">
-                      <span className="font-bold">Turn {turn.turnNo}:</span> {turn.logText}
+                    <p className="text-sm text-white">
+                      <span className="font-bold">TURN {turn.turnNo}:</span> {turn.logText}
                     </p>
                   </div>
                 ))
               ) : (
-                <p className="text-gray-500 text-center">Battle just started...</p>
+                <p className="text-pixel-muted text-center">BATTLE JUST STARTED...</p>
               )}
             </div>
           </div>
