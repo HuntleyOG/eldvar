@@ -51,24 +51,24 @@ export function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white flex items-center justify-center">
-        <div className="text-2xl">Loading profile...</div>
+      <div className="min-h-screen bg-pixel-bg text-pixel-text flex items-center justify-center">
+        <div className="text-2xl font-bold">LOADING PROFILE...</div>
       </div>
     );
   }
 
   if (error || !profile) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
+      <div className="min-h-screen bg-pixel-bg text-pixel-text">
         <div className="container mx-auto px-4 py-8">
-          <div className="bg-red-900/50 border border-red-600 rounded-lg p-6 max-w-2xl mx-auto">
-            <h2 className="text-2xl font-bold mb-4">Error</h2>
+          <div className="bg-pixel-danger border-4 border-black p-6 max-w-2xl mx-auto">
+            <h2 className="text-2xl font-bold mb-4">ERROR</h2>
             <p>{error || 'Profile not found'}</p>
             <button
               onClick={() => navigate('/game')}
-              className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition"
+              className="mt-4 btn-pixel bg-pixel-primary hover:bg-red-600 text-white"
             >
-              Back to Game
+              BACK TO GAME
             </button>
           </div>
         </div>
@@ -77,22 +77,22 @@ export function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
+    <div className="min-h-screen bg-pixel-bg text-pixel-text">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <button
             onClick={() => navigate('/game')}
-            className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg transition"
+            className="btn-pixel bg-pixel-muted hover:bg-gray-600 text-white"
           >
-            ← Back
+            ← BACK
           </button>
           {isOwnProfile && (
             <button
               onClick={() => navigate('/profile/edit')}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition"
+              className="btn-pixel bg-pixel-primary hover:bg-red-600 text-white"
             >
-              Edit Profile
+              EDIT PROFILE
             </button>
           )}
         </div>
@@ -106,16 +106,17 @@ export function ProfilePage() {
         )}
 
         {/* Profile Header */}
-        <div className="bg-gray-800 rounded-lg p-6 border border-gray-700 mb-6">
+        <div className="panel-pixel p-6 mb-6">
           <div className="flex items-start gap-6">
             {profile.avatarUrl ? (
               <img
                 src={profile.avatarUrl}
                 alt={profile.username}
-                className="w-24 h-24 rounded-full border-4 border-blue-500"
+                className="w-24 h-24 border-4 border-pixel-primary"
+                style={{ imageRendering: 'pixelated' }}
               />
             ) : (
-              <div className="w-24 h-24 rounded-full border-4 border-blue-500 bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-4xl font-bold">
+              <div className="w-24 h-24 border-4 border-pixel-primary bg-pixel-secondary flex items-center justify-center text-4xl font-bold">
                 {profile.username.charAt(0).toUpperCase()}
               </div>
             )}
@@ -156,56 +157,56 @@ export function ProfilePage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Stats */}
-          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <h2 className="text-2xl font-bold mb-4 text-blue-400">Stats</h2>
-            <div className="space-y-3 text-gray-300">
+          <div className="panel-pixel p-6">
+            <h2 className="text-2xl font-bold mb-4 text-pixel-primary">STATS</h2>
+            <div className="space-y-3 text-pixel-text">
               <div className="flex justify-between">
-                <span className="font-semibold">Level:</span>
-                <span className="text-blue-400">{profile.level}</span>
+                <span className="font-bold">LEVEL:</span>
+                <span className="text-pixel-primary">{profile.level}</span>
               </div>
               <div className="flex justify-between">
-                <span className="font-semibold">Overall XP:</span>
+                <span className="font-bold">OVERALL XP:</span>
                 <span>{profile.overallXp?.toLocaleString() || 0}</span>
               </div>
               <div className="flex justify-between">
-                <span className="font-semibold">Current Floor:</span>
+                <span className="font-bold">CURRENT FLOOR:</span>
                 <span>{profile.currentFloor || 1}</span>
               </div>
               <div className="flex justify-between">
-                <span className="font-semibold">Deepest Floor:</span>
-                <span className="text-purple-400">{profile.deepestFloor || 1}</span>
+                <span className="font-bold">DEEPEST FLOOR:</span>
+                <span className="text-pixel-secondary">{profile.deepestFloor || 1}</span>
               </div>
               <div className="flex justify-between">
-                <span className="font-semibold">Gold:</span>
-                <span className="text-yellow-400">{profile.gold?.toLocaleString() || 0}</span>
+                <span className="font-bold">GOLD:</span>
+                <span className="text-pixel-warning">{profile.gold?.toLocaleString() || 0}</span>
               </div>
               <div className="flex justify-between">
-                <span className="font-semibold">Role:</span>
-                <span className="capitalize">{profile.role}</span>
+                <span className="font-bold">ROLE:</span>
+                <span className="uppercase">{profile.role}</span>
               </div>
             </div>
           </div>
 
           {/* Skills */}
-          <div className="lg:col-span-2 bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <h2 className="text-2xl font-bold mb-4 text-purple-400">Skills</h2>
+          <div className="lg:col-span-2 panel-pixel p-6">
+            <h2 className="text-2xl font-bold mb-4 text-pixel-secondary">SKILLS</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {skills.map((skill) => (
                 <div
                   key={skill.skillId}
-                  className="bg-gray-900/50 rounded-lg p-4 border border-gray-700"
+                  className="bg-pixel-bg border-4 border-black p-4"
                 >
                   <div className="flex justify-between items-center mb-2">
-                    <h3 className="font-bold text-lg">{skill.skillName}</h3>
-                    <span className="text-blue-400 font-bold">Lv {skill.level}</span>
+                    <h3 className="font-bold text-lg">{skill.skillName.toUpperCase()}</h3>
+                    <span className="text-pixel-primary font-bold">LV {skill.level}</span>
                   </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2 mb-2">
+                  <div className="w-full bg-pixel-bg border-4 border-black h-2 mb-2">
                     <div
-                      className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full"
+                      className="bg-pixel-secondary h-2"
                       style={{ width: `${Math.min((skill.xp % 100) / 100 * 100, 100)}%` }}
                     />
                   </div>
-                  <div className="text-sm text-gray-400">
+                  <div className="text-sm text-pixel-muted">
                     {skill.xp.toLocaleString()} XP
                   </div>
                 </div>
@@ -216,9 +217,9 @@ export function ProfilePage() {
 
         {/* Account Info */}
         {isOwnProfile && (
-          <div className="mt-6 bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <h2 className="text-2xl font-bold mb-4 text-green-400">Account Info</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-300">
+          <div className="mt-6 panel-pixel p-6">
+            <h2 className="text-2xl font-bold mb-4 text-pixel-success">ACCOUNT INFO</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-pixel-text">
               {profile.email && (
                 <div>
                   <span className="font-semibold">Email:</span>{' '}

@@ -115,24 +115,24 @@ export function TravelPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white flex items-center justify-center">
-        <div className="text-2xl">Loading locations...</div>
+      <div className="min-h-screen bg-pixel-bg text-pixel-text flex items-center justify-center">
+        <div className="text-2xl font-bold">LOADING LOCATIONS...</div>
       </div>
     );
   }
 
   if (error && !locations.length) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
+      <div className="min-h-screen bg-pixel-bg text-pixel-text">
         <div className="container mx-auto px-4 py-8">
-          <div className="bg-red-900/50 border border-red-600 rounded-lg p-6 max-w-2xl mx-auto">
-            <h2 className="text-2xl font-bold mb-4">Error</h2>
+          <div className="bg-pixel-danger border-4 border-black p-6 max-w-2xl mx-auto">
+            <h2 className="text-2xl font-bold mb-4">ERROR</h2>
             <p>{error}</p>
             <button
               onClick={() => navigate('/town')}
-              className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition"
+              className="mt-4 btn-pixel bg-pixel-primary hover:bg-red-600 text-white"
             >
-              Back to Town
+              BACK TO TOWN
             </button>
           </div>
         </div>
@@ -141,30 +141,30 @@ export function TravelPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
+    <div className="min-h-screen bg-pixel-bg text-pixel-text">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <button
             onClick={() => navigate('/town')}
-            className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg transition"
+            className="btn-pixel bg-pixel-muted hover:bg-gray-600 text-white"
           >
-            ← Back to Town
+            ← BACK TO TOWN
           </button>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent">
-            Travel
+          <h1 className="text-3xl font-bold text-pixel-primary" style={{ textShadow: '3px 3px 0px rgba(0,0,0,0.5)' }}>
+            TRAVEL
           </h1>
           <div className="w-32"></div> {/* Spacer for centering */}
         </div>
 
         {/* Current Location */}
         {currentLocation && (
-          <div className="bg-blue-900/30 border border-blue-600 rounded-lg p-6 mb-8">
+          <div className="bg-pixel-primary border-4 border-black p-6 mb-8">
             <div className="flex items-center gap-3">
               <span className="text-3xl">📍</span>
               <div>
-                <p className="text-sm text-blue-300">Current Location</p>
-                <p className="text-2xl font-bold">{currentLocation.name}</p>
+                <p className="text-sm text-white">CURRENT LOCATION</p>
+                <p className="text-2xl font-bold text-white">{currentLocation.name.toUpperCase()}</p>
               </div>
             </div>
           </div>
@@ -172,32 +172,32 @@ export function TravelPage() {
 
         {/* Error Message */}
         {error && (
-          <div className="bg-red-900/50 border border-red-600 rounded-lg p-4 mb-6">
-            <p className="text-red-200">{error}</p>
+          <div className="bg-pixel-danger border-4 border-black p-4 mb-6">
+            <p className="text-white">{error}</p>
           </div>
         )}
 
         {/* Traveling UI */}
         {travelDestination ? (
           <div className="max-w-3xl mx-auto">
-            <div className="bg-gray-800 rounded-lg p-8 border border-blue-600">
+            <div className="panel-pixel p-8">
               <h2 className="text-3xl font-bold mb-6 text-center">
-                Traveling to{' '}
-                {locations.find((l) => l.slug === travelDestination)?.name ||
-                  'destination'}
+                TRAVELING TO{' '}
+                {(locations.find((l) => l.slug === travelDestination)?.name ||
+                  'destination').toUpperCase()}
               </h2>
 
               {/* Progress Bar */}
               <div className="mb-6">
                 <div className="flex justify-between mb-2">
-                  <span className="text-sm font-semibold">Progress</span>
+                  <span className="text-sm font-bold">PROGRESS</span>
                   <span className="text-sm">
-                    {travelProgress} / {travelDistance} steps
+                    {travelProgress} / {travelDistance} STEPS
                   </span>
                 </div>
-                <div className="w-full bg-gray-700 rounded-full h-6">
+                <div className="w-full bg-pixel-bg border-4 border-black h-6">
                   <div
-                    className="bg-gradient-to-r from-blue-500 to-purple-600 h-6 rounded-full transition-all duration-300 flex items-center justify-center text-xs font-bold"
+                    className="bg-pixel-secondary h-6 transition-all duration-300 flex items-center justify-center text-xs font-bold"
                     style={{
                       width: `${Math.max(5, (travelProgress / travelDistance) * 100)}%`,
                     }}
@@ -212,23 +212,23 @@ export function TravelPage() {
                 <button
                   onClick={handleTakeStep}
                   disabled={traveling}
-                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold py-4 px-6 rounded-lg transition text-lg"
+                  className="w-full btn-pixel bg-pixel-primary hover:bg-red-600 disabled:bg-pixel-muted disabled:cursor-not-allowed text-white py-4 text-lg"
                 >
-                  {traveling ? '🚶 Taking Step...' : '🚶 Take Step Forward'}
+                  {traveling ? '🚶 TAKING STEP...' : '🚶 TAKE STEP FORWARD'}
                 </button>
                 <button
                   onClick={handleCancelTravel}
                   disabled={traveling}
-                  className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold py-2 px-6 rounded-lg transition"
+                  className="w-full btn-pixel bg-pixel-danger hover:bg-red-700 disabled:bg-pixel-muted disabled:cursor-not-allowed text-white"
                 >
-                  Cancel Travel
+                  CANCEL TRAVEL
                 </button>
               </div>
 
-              <div className="mt-6 p-4 bg-yellow-900/30 border border-yellow-600 rounded-lg">
-                <p className="text-yellow-200 text-sm text-center">
-                  ⚠️ Each step has a chance of encountering enemies, finding loot, or gaining
-                  pathfinding XP!
+              <div className="mt-6 p-4 bg-pixel-warning border-4 border-black">
+                <p className="text-white text-sm text-center font-bold">
+                  ⚠️ EACH STEP HAS A CHANCE OF ENCOUNTERING ENEMIES, FINDING LOOT, OR GAINING
+                  PATHFINDING XP!
                 </p>
               </div>
             </div>
@@ -242,10 +242,10 @@ export function TravelPage() {
               return (
                 <div
                   key={location.id}
-                  className={`bg-gray-800 rounded-lg overflow-hidden border ${
+                  className={`panel-pixel overflow-hidden ${
                     isCurrentLocation
-                      ? 'border-blue-500 ring-2 ring-blue-500/50'
-                      : 'border-gray-700'
+                      ? 'border-pixel-primary'
+                      : ''
                   }`}
                 >
                   {/* Location Image */}
@@ -253,11 +253,12 @@ export function TravelPage() {
                     <div
                       className="h-40 bg-cover bg-center"
                       style={{
-                        backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url(${location.imagePath})`,
+                        backgroundImage: `url(${location.imagePath})`,
+                        filter: 'contrast(1.2) saturate(0.9)',
                       }}
                     />
                   ) : (
-                    <div className="h-40 bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
+                    <div className="h-40 bg-pixel-accent flex items-center justify-center">
                       <span className="text-6xl">🏰</span>
                     </div>
                   )}
@@ -265,20 +266,20 @@ export function TravelPage() {
                   {/* Location Info */}
                   <div className="p-6">
                     <div className="flex justify-between items-start mb-3">
-                      <h2 className="text-2xl font-bold">{location.name}</h2>
+                      <h2 className="text-2xl font-bold">{location.name.toUpperCase()}</h2>
                       {isCurrentLocation && (
-                        <span className="bg-blue-600 text-xs font-bold px-2 py-1 rounded">
+                        <span className="bg-pixel-primary text-xs font-bold px-2 py-1 border-2 border-black">
                           CURRENT
                         </span>
                       )}
                     </div>
 
                     {location.shortBlurb && (
-                      <p className="text-gray-400 mb-4">{location.shortBlurb}</p>
+                      <p className="text-pixel-muted mb-4">{location.shortBlurb}</p>
                     )}
 
                     {location.loreText && (
-                      <p className="text-gray-500 text-sm italic mb-4 line-clamp-2">
+                      <p className="text-pixel-muted text-sm italic mb-4 line-clamp-2">
                         {location.loreText}
                       </p>
                     )}
@@ -286,15 +287,15 @@ export function TravelPage() {
                     <button
                       onClick={() => handleStartTravel(location.slug)}
                       disabled={isCurrentLocation}
-                      className={`w-full font-bold py-3 px-4 rounded-lg transition ${
+                      className={`w-full btn-pixel py-3 ${
                         isCurrentLocation
-                          ? 'bg-gray-600 cursor-not-allowed text-gray-400'
-                          : 'bg-blue-600 hover:bg-blue-700 text-white'
+                          ? 'bg-pixel-muted cursor-not-allowed text-white'
+                          : 'bg-pixel-primary hover:bg-red-600 text-white'
                       }`}
                     >
                       {isCurrentLocation
-                        ? 'You are here'
-                        : `Travel to ${location.name}`}
+                        ? 'YOU ARE HERE'
+                        : `TRAVEL TO ${location.name.toUpperCase()}`}
                     </button>
                   </div>
                 </div>
@@ -304,8 +305,8 @@ export function TravelPage() {
         )}
 
         {/* Footer Info */}
-        <div className="mt-8 text-center text-gray-500 text-sm">
-          <p>ℹ️ Step-based travel - each step has chances for encounters, loot, and XP!</p>
+        <div className="mt-8 text-center text-pixel-muted text-sm">
+          <p>ℹ️ STEP-BASED TRAVEL - EACH STEP HAS CHANCES FOR ENCOUNTERS, LOOT, AND XP!</p>
         </div>
       </div>
     </div>
